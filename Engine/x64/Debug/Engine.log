@@ -1,0 +1,16 @@
+﻿  pch.cpp
+  CommandQueue.cpp
+  ConstantBuffer.cpp
+  Device.cpp
+  Engine.cpp
+  EnginePch.cpp
+  EngineType.cpp
+  Enum.cpp
+  Macro.cpp
+  Mesh.cpp
+  RootSignature.cpp
+  Shader.cpp
+  SwapChain.cpp
+  TableDescriptorHeap.cpp
+  코드를 생성하고 있습니다...
+  Engine.vcxproj -> C:\Users\xpc\Desktop\Cpp\DirectX12\IndexBuffer\Output\Engine.lib
