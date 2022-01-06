@@ -20,15 +20,21 @@ public:
 	void RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect);
 	void RenderEnd();
 
-	/* ----- Helper Function ----- */
-	ComPtr<ID3D12CommandQueue> GetCmdQueue() { return _cmdQueue; }
-	ComPtr<ID3D12GraphicsCommandList> GetCmdList() { return	_cmdList; }
+	void FlushResourceCommnadQueue();		// 리소스를 로딩하는 함수
 
+	/* ----- Helper Function ----- */
+	ComPtr<ID3D12CommandQueue>			GetCmdQueue() { return _cmdQueue; }
+	ComPtr<ID3D12GraphicsCommandList>	GetCmdList() { return	_cmdList; }
+	ComPtr<ID3D12GraphicsCommandList>	GetResourceCmdList() { return _resCmdList; }
 private:
 	/* ----- CommandQueue Variable ----- */
-	ComPtr<ID3D12CommandQueue>			_cmdQueue;
+	ComPtr<ID3D12CommandQueue>			_cmdQueue;		// Queue하나만 존재해야한다.
 	ComPtr<ID3D12CommandAllocator>		_cmdAlloc;
 	ComPtr<ID3D12GraphicsCommandList>	_cmdList;
+
+	/* ----- Resource CommandQueue Variable ----- */
+	ComPtr<ID3D12CommandAllocator>		_resCmdAlloc;	
+	ComPtr<ID3D12GraphicsCommandList>	_resCmdList;	// 리소스 로딩용도
 
 	/* ----- Fence Variable ----- */
 	ComPtr<ID3D12Fence>					_fence;

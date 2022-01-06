@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Mesh.h"
 #include "Engine.h"
+#include "Material.h"
 
 void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexBuffer)
 {
@@ -16,11 +17,6 @@ void Mesh::Render()
 	CMD_LIST->IASetIndexBuffer(&_indexBufferView);
 
 	// 2) TableDescHeap에다가 CBV 전달
-	{
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetConstantBuffer()->PushData(0, &_transform, sizeof(_transform));
-		GEngine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
-	}
-
 	// 3) 모두 세팅이 끝났으면 TableDescHeap 커밋
 	GEngine->GetTableDescHeap()->CommitTable();
 

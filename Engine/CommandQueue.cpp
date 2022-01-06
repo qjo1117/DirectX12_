@@ -18,11 +18,15 @@ void CommandQueue::Init(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapC
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
+	// 작업용 CommandList
 	device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&_cmdQueue));
 	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdAlloc));
 	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _cmdAlloc.Get(), nullptr, IID_PPV_ARGS(&_cmdList));
-
 	_cmdList->Close();	// Close : 제출 / Open : 리스트 입력
+
+	// Resource용 CommandList
+	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_resCmdAlloc));
+	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _resCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&_resCmdList));
 
 	/* ----- Fence 생성 및 이벤트 락을 쓰기위해 Event 생성 ----- */
 	device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&_fence));
@@ -53,12 +57,15 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	/* ----- Barrier를 만들어준다. ----- */
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 		_swapChain->GetBackRTVBuffer().Get(),
-		D3D12_RESOURCE_STATE_PRESENT, // 화면 출력			Before State
-		D3D12_RESOURCE_STATE_RENDER_TARGET); // 외주 결과물	After State
+		D3D12_RESOURCE_STATE_PRESENT,			// 화면 출력		Before State
+		D3D12_RESOURCE_STATE_RENDER_TARGET);	// 외주 결과물	After State
 
 	/* ----- 사용할 영역을 정의해준다. ----- */
 	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
-	GEngine->GetConstantBuffer()->Clear();
+
+	for (uint8 type = 0; type < static_cast<uint8>(CONSTANT_BUFFER_TYPE::END); ++type) {
+		GEngine->GetConstantBuffer(static_cast<CONSTANT_BUFFER_TYPE>(type))->Clear();
+	}
 	GEngine->GetTableDescHeap()->Clear();
 
 	ID3D12DescriptorHeap* descHeap = GEngine->GetTableDescHeap()->GetDescriptorHeap().Get();
@@ -73,7 +80,15 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	/* ----- BackBuffer를 정의해준다. ----- */
 	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = _swapChain->GetBackRTV();
 	_cmdList->ClearRenderTargetView(backBufferView, Colors::LightSteelBlue, 0, nullptr);
-	_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, nullptr);
+
+	/* ----- 깊이 버퍼의 정보를 기입해준다. ----- */
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = GEngine->GetDepthStencilBuffer()->GetDSVCpuHandle();
+	_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
+	_cmdList->ClearDepthStencilView(
+		depthStencilView, 
+		D3D12_CLEAR_FLAG_DEPTH /* | Stencil타입은 비트플래그로 추가가능*/, 
+		1.0f, 0, 0, nullptr
+	);
 }
 
 void CommandQueue::RenderEnd()
@@ -81,8 +96,9 @@ void CommandQueue::RenderEnd()
 	/* ----- Barrier를 다시 생성해준다. ----- */
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 		_swapChain->GetBackRTVBuffer().Get(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, // 외주 결과물	Before
-		D3D12_RESOURCE_STATE_PRESENT); // 화면 출력			Atfer
+		D3D12_RESOURCE_STATE_RENDER_TARGET,		// 외주 결과물	Before
+		D3D12_RESOURCE_STATE_PRESENT			// 화면 출력			Atfer
+	);
 
 	/* ----- 현재 리스트에 있는 내용을 GPU에게 전달해준다. ----- */
 	_cmdList->ResourceBarrier(1, &barrier);
@@ -99,4 +115,18 @@ void CommandQueue::RenderEnd()
 
 	/* ----- SwapChain의 버퍼 인덱스를 스왑핑 해준다. ----- */
 	_swapChain->SwapIndex();
+}
+
+void CommandQueue::FlushResourceCommnadQueue()
+{
+	/* ----- Resource Command List에 잇는 내용을 업로딩해준다. ----- */
+	_resCmdList->Close();		// 제출
+
+	ID3D12CommandList* cmdListArr[] = { _resCmdList.Get() };
+	_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
+
+	WaitSync();
+
+	_resCmdAlloc->Reset();
+	_resCmdList->Reset(_resCmdAlloc.Get(), nullptr);
 }

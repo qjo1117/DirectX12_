@@ -1,16 +1,14 @@
-﻿  pch.cpp
-  CommandQueue.cpp
+﻿  CommandQueue.cpp
   ConstantBuffer.cpp
-  Device.cpp
+  DepthStencilBuffer.cpp
   Engine.cpp
   EnginePch.cpp
-  EngineType.cpp
-  Enum.cpp
-  Macro.cpp
+  Material.cpp
   Mesh.cpp
+  MeshRenderer.cpp
   RootSignature.cpp
   Shader.cpp
-  SwapChain.cpp
   TableDescriptorHeap.cpp
+  Texture.cpp
   코드를 생성하고 있습니다...
-  Engine.vcxproj -> C:\Users\xpc\Desktop\Cpp\DirectX12\IndexBuffer\Output\Engine.lib
+  Engine.vcxproj -> D:\Cpp\DirectX12\3_Input\Output\Engine.lib
