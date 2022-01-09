@@ -21,7 +21,7 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUHandle(SRV_REGISTER reg);
 
 private:
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle(uint8 reg);
+	D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUHandle(uint8 reg);
 
 private:
 	/* ----- TableDescriptorHeap Variable ----- */

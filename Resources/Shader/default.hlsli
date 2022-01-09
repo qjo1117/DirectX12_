@@ -1,8 +1,8 @@
 // 알고 잇으니 패스
 
-cbuffer TEST_B0 : register(b0)
+cbuffer TRANSFORM_PARAMS : register(b0)
 {
-    float4 offset0;
+    row_major matrix matWVP;
 };
 
 cbuffer MATERIAL_PARAMS : register(b1)
@@ -30,21 +30,24 @@ SamplerState sam_0 : register(s0);  // 색상을 골라주는 정책
 struct VS_IN
 {
     float3 pos : POSITION;
-    float4 color : COLOR;
     float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
 };
 
 struct VS_OUT
 {
     float4 pos : SV_Position;
-    float4 color : COLOR;
     float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
 };
 
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT)0;
 
+<<<<<<< Updated upstream
     output.pos = float4(input.pos, 1.f);
     // TODO : 장난
     output.pos.x += float_0;
@@ -54,6 +57,9 @@ VS_OUT VS_Main(VS_IN input)
     output.pos += offset0;
     
     output.color = input.color;
+=======
+    output.pos = mul(float4(input.pos, 1.0f), matWVP);
+>>>>>>> Stashed changes
     output.uv = input.uv;
     
     return output;
@@ -61,7 +67,7 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float4 color = tex_0.Sample(sam_0, input.uv) * input.color;
+    float4 color = tex_0.Sample(sam_0, input.uv);
     
     return color;
 }

@@ -9,11 +9,19 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+<<<<<<< Updated upstream
     <Filter Include="소스 파일\Utils">
       <UniqueIdentifier>{ba85b981-78c0-4e00-81c6-56efb3afec53}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\Game">
       <UniqueIdentifier>{c6b1ff15-4953-4a37-867b-e4f6e7b4f5dc}</UniqueIdentifier>
+=======
+    <Filter Include="소스파일\Content\Scene">
+      <UniqueIdentifier>{2f3b1697-06d8-4900-bff3-58064c130039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Content\Controller">
+      <UniqueIdentifier>{e21323b5-13c0-4132-b5d4-1906f231ca94}</UniqueIdentifier>
+>>>>>>> Stashed changes
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,7 +41,23 @@
       <Filter>소스 파일\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
+<<<<<<< Updated upstream
       <Filter>소스 파일\Game</Filter>
+=======
+      <Filter>소스파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScene.h">
+      <Filter>소스파일\Content\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolScene.h">
+      <Filter>소스파일\Content\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>소스파일\Content\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="RotationXComponent.h">
+      <Filter>소스파일\Content\Controller</Filter>
+>>>>>>> Stashed changes
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -57,7 +81,23 @@
       <Filter>소스 파일\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
+<<<<<<< Updated upstream
       <Filter>소스 파일\Game</Filter>
+=======
+      <Filter>소스파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="StartScene.cpp">
+      <Filter>소스파일\Content\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolScene.cpp">
+      <Filter>소스파일\Content\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>소스파일\Content\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="RotationXComponent.cpp">
+      <Filter>소스파일\Content\Controller</Filter>
+>>>>>>> Stashed changes
     </ClCompile>
   </ItemGroup>
 </Project>

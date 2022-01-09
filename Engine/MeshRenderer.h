@@ -20,7 +20,6 @@ public:
 	void SetMaterial(shared_ptr<Material> material) { _material = material; }
 
 	/* ----- virtual Function ----- */
-	virtual void Update() override { Render(); };
 	void Render();
 
 private:

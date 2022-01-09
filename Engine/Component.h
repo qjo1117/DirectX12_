@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Object.h"
+
 class GameObject;
 class Transform;
 
 /*--------------
 	Component
 ---------------*/
-class Component
+class Component : public Object
 {
 public:
 	/* ----- Constructor Function ----- */
@@ -19,6 +21,7 @@ public:
 	virtual void Start() { }
 	virtual void Update() { }
 	virtual void LateUpdate() { }
+	virtual void FinalUpdate() { }
 
 public:
 	/* ----- Helper Function ----- */

@@ -14,7 +14,16 @@
 
 #include "Input.h"
 #include "Timer.h"
+<<<<<<< Updated upstream
+=======
+#include "SceneManager.h"
+#include "EngineGUI.h"
+#include "Resources.h"
+>>>>>>> Stashed changes
 
+/*-----------
+	Engine 
+------------*/
 class Engine
 {
 public:
@@ -23,6 +32,7 @@ public:
 	void Render();
 	void Update();
 	void LateUpdate();
+	void End();
 
 public:
 	/* ----- Helper Function ----- */
@@ -32,10 +42,16 @@ public:
 	shared_ptr<RootSignature>		GetRootSignature() { return _rootSignature; }
 	shared_ptr<TableDescriptorHeap> GetTableDescHeap() { return _tableDescHeap; }
 	shared_ptr<DepthStencilBuffer>	GetDepthStencilBuffer() { return _depthStencilBuffer; }
-
+	shared_ptr<EngineGUI>			GetGUI() { return _engineGUI; }
 	shared_ptr<ConstantBuffer>		GetConstantBuffer(CONSTANT_BUFFER_TYPE type) { return _constantBuffers[static_cast<uint8>(type)]; }
 
+<<<<<<< Updated upstream
 public:
+=======
+
+	const WindowInfo& GetWindow() { return _winInfo; }
+private:
+>>>>>>> Stashed changes
 	/* ----- Render Function ----- */
 	void RenderBegin();
 	void RenderEnd();
@@ -61,5 +77,7 @@ private:
 	shared_ptr<DepthStencilBuffer>			_depthStencilBuffer;
 
 	vector<shared_ptr<ConstantBuffer>>		_constantBuffers;
+
+	shared_ptr<EngineGUI>					_engineGUI;
 };
 

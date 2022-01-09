@@ -1,10 +1,15 @@
 #pragma once
 
+#include "Object.h"
+
 /*-----------
 	Shader
 ------------*/
-class Shader
+class Shader : public Object
 {
+public:
+	Shader();
+	virtual ~Shader();
 public:
 	/* ----- External Function ----- */
 	void Init(const wstring& path);

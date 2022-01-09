@@ -4,7 +4,7 @@
 /*------------------
 	MonoBehaviour
 -------------------*/
-class MonoBehaviour : public Component
+class  MonoBehaviour abstract : public Component
 {
 public:
 	/* ----- Constructor Function ----- */
@@ -17,5 +17,10 @@ public:
 	virtual void Start() { }
 	virtual void Update() { }
 	virtual void LateUpdate() { }
+	virtual void FinalUpdate() sealed { }
+
+public:
+	/* ----- GUI Function ----- */
+	virtual void DrawGUI() { }
 };
 

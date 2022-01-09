@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Object.h"
+
 enum
 {
 	MATERIAL_INT_COUNT = 5,
@@ -19,11 +21,15 @@ struct MaterialParam
 /*-------------
 	Material
 --------------*/
-class Material
+class Material : public Object
 {
 public:
+	Material();
+	virtual ~Material();
+
+public:
 	/* ----- External Function ----- */
-	void Update();
+	void PushData();
 
 	/* ----- Helper Function ----- */
 	shared_ptr<class Shader> GetShader() { return _shader; }
@@ -35,7 +41,7 @@ public:
 private:
 	/* ----- Material Part Variable ----- */
 	shared_ptr<class Shader>		_shader;
-	MaterialParam					_params;
+	MaterialParam					_params = {};
 	array<shared_ptr<class Texture>, MATERIAL_TEXTURE_COUNT>	_textures;
 };
 

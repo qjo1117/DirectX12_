@@ -6,5 +6,6 @@ public:
 
 	void Init(const WindowInfo& info);
 	void Update();
+	void End();
 };
 

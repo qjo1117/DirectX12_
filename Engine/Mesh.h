@@ -1,10 +1,15 @@
 #pragma once
 
+#include "Object.h"
+
 /*---------
 	Mesh
 ----------*/
-class Mesh
+class Mesh : public Object
 {
+public:
+	Mesh();
+	virtual ~Mesh();
 public:
 	/* ----- External Function ----- */
 	void Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer);

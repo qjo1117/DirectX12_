@@ -4,8 +4,13 @@
 #include "Material.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
+<<<<<<< Updated upstream
 
 shared_ptr<GameObject> gameObject = make_shared<GameObject>();
+=======
+#include "StartScene.h"
+#include "ToolScene.h"
+>>>>>>> Stashed changes
 
 void Game::Init(const WindowInfo& info)
 {
@@ -51,6 +56,7 @@ void Game::Init(const WindowInfo& info)
 		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
 		texture->Init(L"..\\Resources\\Texture\\Picture.jpg");
 
+<<<<<<< Updated upstream
 		material->SetShader(shader);
 		material->SetTexture(0, texture);
 		material->SetFloat(0, 0.3f);
@@ -65,6 +71,9 @@ void Game::Init(const WindowInfo& info)
 	gameObject->AddComponent(renderer);
 
 	GEngine->GetCmdQueue()->WaitSync();
+=======
+	GET_SINGLE(SceneManager)->LoadScene(SCENE_TYPE::TOOL);
+>>>>>>> Stashed changes
 }
 
 void Game::Update()
@@ -76,4 +85,9 @@ void Game::Update()
 	gameObject->Update();
 
 	GEngine->RenderEnd();
+}
+
+void Game::End()
+{
+	GEngine->End();
 }

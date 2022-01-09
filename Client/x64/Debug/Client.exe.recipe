@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< Updated upstream
       <FullPath>D:\Cpp\DirectX12\3_Input\Output\Client.exe</FullPath>
+=======
+      <FullPath>D:\Cpp\DirectX12\6_Resources\Output\Client.exe</FullPath>
+>>>>>>> Stashed changes
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
