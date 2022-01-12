@@ -91,6 +91,13 @@ void ConstantBuffer::PushData(void* buffer, uint32 size)
 	_currentIndex += 1;
 }
 
+void ConstantBuffer::SetGlobalData(void* buffer, uint32 size)
+{
+	assert(_elementSize == ((size + 255) & ~255));
+	::memcpy(&_mappedBuffer[0], buffer, size);
+	CMD_LIST->SetGraphicsRootConstantBufferView(0, GetGpuVirtualAddress(0));
+}
+
 D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGpuVirtualAddress(uint32 index)
 {
 	/* ----- GPU쪽 Handle주소를 인덱스에 맞게 반환한다. ----- */

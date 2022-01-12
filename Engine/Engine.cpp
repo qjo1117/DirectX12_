@@ -2,9 +2,23 @@
 #include "Engine.h"
 #include "Material.h"
 #include "Transform.h"
+#include "Light.h"
 
 void Engine::Init(const WindowInfo& info)
 {
+	// 지속적으로 걱정하지만 콘솔을 끄면 WM_QUIT 이벤트가 발생을 안해서
+	// 메모리가 정상적으로 해제가 안되니 꼭꼭꼭 Window를 종료시키자.
+#pragma region DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetBreakAlloc();
+	// 메모리 Leak이 있을때만 사용하면 됨
+
+#ifdef _DEBUG
+	AllocConsole();
+#endif 
+#pragma endregion
+
+	/* ----- 정보 저장 ----- */
 	_winInfo = info;
 
 	/* ----- 그려질 화면 크기를 설정 ----- */
@@ -31,13 +45,14 @@ void Engine::Init(const WindowInfo& info)
 	_depthStencilBuffer->Init(info);
 	_engineGUI->Init();
 	
-	INPUT->Init(_winInfo.hWnd);
-	TIMER->Init(_winInfo.hWnd);
+	GET_SINGLE(Input)->Init(_winInfo.hWnd);
+	GET_SINGLE(Timer)->Init(_winInfo.hWnd);
 
 	ResizeWindow(info.width, info.height);
 
-	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(TransformMatrix), 256);
-	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(MaterialParam), 256);
+	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(LightParam), 1);
+	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(TransformParams), 256);
+	CreateConstantBuffer(CBV_REGISTER::b2, sizeof(MaterialParam), 256);
 }
 
 void Engine::Render()
@@ -45,15 +60,13 @@ void Engine::Render()
 
 	RenderBegin();
 
-<<<<<<< Updated upstream
-	// TODO : 나머지 물체들 그려준다
-=======
+
+
 	GET_SINGLE(SceneManager)->Render();
 
 	if (GET_SINGLE(SceneManager)->GetType() == SCENE_TYPE::TOOL) {
 		_engineGUI->Render();
 	}
->>>>>>> Stashed changes
 
 	RenderEnd();
 
@@ -62,10 +75,6 @@ void Engine::Render()
 
 void Engine::Update()
 {
-<<<<<<< Updated upstream
-	INPUT->Update();
-	TIMER->Update();
-=======
 
 	GET_SINGLE(Input)->Update();
 	GET_SINGLE(Timer)->Update();
@@ -73,7 +82,6 @@ void Engine::Update()
 
 
 	Render();
->>>>>>> Stashed changes
 }
 
 void Engine::LateUpdate()

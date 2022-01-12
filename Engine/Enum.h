@@ -40,7 +40,10 @@ enum class KEY_TYPE
 	DOWN = VK_DOWN,
 	LEFT = VK_LEFT,
 	RIGHT = VK_RIGHT,
+
 	SPACE = VK_SPACE,
+	DEL = VK_DELETE,
+	SHIFT = VK_SHIFT,
 
 	W = 'W',
 	A = 'A',
@@ -91,6 +94,7 @@ enum class COMPONENT_TYPE : uint8
 	TRANSFORM,
 	MESH_RENDERER,
 	CAMERA,
+	LIGHT,
 	// ...
 	MONO_BEHAVIOUR,
 	END,
@@ -99,22 +103,9 @@ enum class COMPONENT_TYPE : uint8
 enum
 {
 	FIXED_COMPONENT_COUNT = static_cast<uint8>(COMPONENT_TYPE::END) - 1,
-<<<<<<< Updated upstream
-=======
 };
 
 /* --------------------------- SCNEN --------------------------- */
-
-enum class LAYER_TYPE : uint32
-{
-	UI,
-	CAMERA,
-
-	// TO DO : 추가적으로 만들어준다.
-
-	DEFAULT,
-	END = 32
-};
 
 enum class SCENE_TYPE : uint32
 {
@@ -126,5 +117,4 @@ enum class SCENE_TYPE : uint32
 	STAGE_2,
 
 	END,
->>>>>>> Stashed changes
 };

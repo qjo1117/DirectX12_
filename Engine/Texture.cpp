@@ -71,6 +71,7 @@ void Texture::CreateTexture(const wstring& path)
 		assert(nullptr);
 	}
 
+	
 	/* ----- SubResource를 업데이트해서 정보를 갱신합니다. ----- */
 	::UpdateSubresources(
 		RESOURCE_CMD_LIST.Get(),
@@ -94,12 +95,13 @@ void Texture::CreateView()
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	DEVICE->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap));
 
-	_srvHandle = _srvHeap->GetCPUDescriptorHandleForHeapStart();
+	_srvCpuHandle = _srvHeap->GetCPUDescriptorHandleForHeapStart();
+	_srvGpuHandle = _srvHeap->GetGPUDescriptorHandleForHeapStart();
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = _image.GetMetadata().format;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Texture2D.MipLevels = 1;
-	DEVICE->CreateShaderResourceView(_tex2D.Get(), &srvDesc, _srvHandle);
+	DEVICE->CreateShaderResourceView(_tex2D.Get(), &srvDesc, _srvCpuHandle);
 }

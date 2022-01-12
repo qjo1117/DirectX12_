@@ -1,49 +1,46 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="소스파일">
+      <UniqueIdentifier>{52dd4032-7afe-4276-ab7d-f8c2cb0e66a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Content">
+      <UniqueIdentifier>{5ea497a8-4fd2-4afe-ab83-5a33cbd5bc8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Game">
+      <UniqueIdentifier>{c6b1ff15-4953-4a37-867b-e4f6e7b4f5dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스파일\Utils">
+      <UniqueIdentifier>{ba85b981-78c0-4e00-81c6-56efb3afec53}</UniqueIdentifier>
     </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-<<<<<<< Updated upstream
-    <Filter Include="소스 파일\Utils">
-      <UniqueIdentifier>{ba85b981-78c0-4e00-81c6-56efb3afec53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Game">
-      <UniqueIdentifier>{c6b1ff15-4953-4a37-867b-e4f6e7b4f5dc}</UniqueIdentifier>
-=======
     <Filter Include="소스파일\Content\Scene">
       <UniqueIdentifier>{2f3b1697-06d8-4900-bff3-58064c130039}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스파일\Content\Controller">
       <UniqueIdentifier>{e21323b5-13c0-4132-b5d4-1906f231ca94}</UniqueIdentifier>
->>>>>>> Stashed changes
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
-      <Filter>소스 파일\Utils</Filter>
+      <Filter>소스파일\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
-      <Filter>소스 파일\Utils</Filter>
+      <Filter>소스파일\Utils</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>소스 파일\Utils</Filter>
+      <Filter>소스파일\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>소스 파일\Utils</Filter>
+      <Filter>소스파일\Utils</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>소스 파일\Utils</Filter>
+      <Filter>소스파일\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-<<<<<<< Updated upstream
-      <Filter>소스 파일\Game</Filter>
-=======
       <Filter>소스파일\Game</Filter>
     </ClInclude>
     <ClInclude Include="StartScene.h">
@@ -57,7 +54,12 @@
     </ClInclude>
     <ClInclude Include="RotationXComponent.h">
       <Filter>소스파일\Content\Controller</Filter>
->>>>>>> Stashed changes
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>소스파일\Content\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>소스파일\Content\Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,15 +77,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
-      <Filter>소스 파일\Utils</Filter>
+      <Filter>소스파일\Utils</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>소스 파일\Utils</Filter>
+      <Filter>소스파일\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-<<<<<<< Updated upstream
-      <Filter>소스 파일\Game</Filter>
-=======
       <Filter>소스파일\Game</Filter>
     </ClCompile>
     <ClCompile Include="StartScene.cpp">
@@ -97,7 +96,12 @@
     </ClCompile>
     <ClCompile Include="RotationXComponent.cpp">
       <Filter>소스파일\Content\Controller</Filter>
->>>>>>> Stashed changes
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>소스파일\Content\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Billboard.cpp">
+      <Filter>소스파일\Content\Controller</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

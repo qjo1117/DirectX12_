@@ -1,31 +1,8 @@
-// 알고 잇으니 패스
+#ifndef _DEFAULT_HLSLI_
+#define _DEFAULT_HLSLI_
 
-cbuffer TRANSFORM_PARAMS : register(b0)
-{
-    row_major matrix matWVP;
-};
-
-cbuffer MATERIAL_PARAMS : register(b1)
-{
-    int int_0;
-    int int_1;
-    int int_2;
-    int int_3;
-    int int_4;
-    float float_0;
-    float float_1;
-    float float_2;
-    float float_3;
-    float float_4;
-};
-
-Texture2D tex_0 : register(t0);
-Texture2D tex_1 : register(t1);
-Texture2D tex_2 : register(t2);
-Texture2D tex_3 : register(t3);
-Texture2D tex_4 : register(t4);
-
-SamplerState sam_0 : register(s0);  // 색상을 골라주는 정책
+#include "params.hlsli"
+#include "utils.hlsli"
 
 struct VS_IN
 {
@@ -39,35 +16,62 @@ struct VS_OUT
 {
     float4 pos : SV_Position;
     float2 uv : TEXCOORD;
-    float3 normal : NORMAL;
-    float3 tangent : TANGENT;
+    float3 viewPos : POSITION;
+    float3 viewNormal : NORMAL;
+    float3 viewTangent : TANGET;
+    float3 viewBinormal : BINORMAL;
 };
 
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT)0;
 
-<<<<<<< Updated upstream
-    output.pos = float4(input.pos, 1.f);
-    // TODO : 장난
-    output.pos.x += float_0;
-    output.pos.y += float_1;
-    output.pos.z += float_2;
-    
-    output.pos += offset0;
-    
-    output.color = input.color;
-=======
-    output.pos = mul(float4(input.pos, 1.0f), matWVP);
->>>>>>> Stashed changes
+    output.pos = mul(float4(input.pos, 1.f), g_matWVP);
     output.uv = input.uv;
-    
+
+    output.viewPos = mul(float4(input.pos, 1.f), g_matWV).xyz;
+    output.viewNormal = normalize(mul(float4(input.normal, 0.f), g_matWV).xyz);
+    output.viewTangent = normalize(mul(float4(input.tangent, 0.f), g_matWV).xyz);
+    output.viewBinormal = normalize(cross(output.viewTangent, output.viewNormal));
+
     return output;
 }
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float4 color = tex_0.Sample(sam_0, input.uv);
-    
+    float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    if (g_tex_on_0)
+    {
+        color = g_tex_0.Sample(g_sam_0, input.uv);
+    }
+
+    float3 viewNormal = input.viewNormal;
+    if (g_tex_on_1)      // Normal이라고 정해둔 것
+    {
+        // [0, 255] -> [0, 1] Sample에서 스튜러스를 알아서 해줌
+        float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
+        // [0, 1] -> [-1, 1]
+        tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.0f;
+
+        float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
+        viewNormal = normalize(mul(tangentSpaceNormal, matTBN));
+    }
+ 
+    LightColor totalColor = (LightColor)0.f;
+
+    for (int i = 0; i < g_lightCount; ++i)
+    {
+        LightColor lightColor = CalculateLightColor(i, viewNormal, input.viewPos);
+            totalColor.diffuse += lightColor.diffuse;
+            totalColor.ambient += lightColor.ambient;
+            totalColor.specular += lightColor.specular;
+    }
+
+    color.xyz = (totalColor.diffuse.xyz * color.xyz)
+        + totalColor.ambient.xyz * color.xyz
+        + totalColor.specular.xyz;
+
     return color;
 }
+
+#endif

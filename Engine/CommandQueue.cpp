@@ -63,9 +63,8 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	/* ----- 사용할 영역을 정의해준다. ----- */
 	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
 
-	for (uint8 type = 0; type < static_cast<uint8>(CONSTANT_BUFFER_TYPE::END); ++type) {
-		GEngine->GetConstantBuffer(static_cast<CONSTANT_BUFFER_TYPE>(type))->Clear();
-	}
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM)->Clear();
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL)->Clear();
 	GEngine->GetTableDescHeap()->Clear();
 
 	ID3D12DescriptorHeap* descHeap = GEngine->GetTableDescHeap()->GetDescriptorHeap().Get();
@@ -79,7 +78,7 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 
 	/* ----- BackBuffer를 정의해준다. ----- */
 	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = _swapChain->GetBackRTV();
-	_cmdList->ClearRenderTargetView(backBufferView, Colors::LightSteelBlue, 0, nullptr);
+	_cmdList->ClearRenderTargetView(backBufferView, Colors::Black, 0, nullptr);
 
 	/* ----- 깊이 버퍼의 정보를 기입해준다. ----- */
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = GEngine->GetDepthStencilBuffer()->GetDSVCpuHandle();

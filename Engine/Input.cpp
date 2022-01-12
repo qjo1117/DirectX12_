@@ -24,8 +24,10 @@ void Input::Update()
 
 	/* ----- 한번에 각 키가 눌렸는지 확인한다. ----- */
 	if (::GetKeyboardState(_ascilKeys) == false) {
+		_isAnyKey = false;
 		return;
 	}
+	_isAnyKey = true;
 
 	/* ----- 각 키보드 맵핑된 상태를 확인한다. ----- */
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; ++key) {

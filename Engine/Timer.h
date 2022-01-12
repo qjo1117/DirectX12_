@@ -5,13 +5,8 @@
 -----------*/
 class Timer
 {
-public:
-	/* ----- Simple SingleTon ----- */
-	static Timer* GetI()
-	{
-		static Timer instance;
-		return &instance;
-	}
+private:
+	DECLARE_SINGLE(Timer)
 
 public:
 	/* ----- External Function ----- */
@@ -30,7 +25,7 @@ public:
 	void	Slow() { _state = TIMER_STATE::SLOW; }
 	void	Fast() { _state = TIMER_STATE::FAST; }
 
-private:
+public:
 	void ShowFps();
 
 private:

@@ -17,5 +17,16 @@ public:
 public:
 	/* ----- GUI Function ----- */
 	virtual void DrawGUI();
+
+	void TargetFollow();
+	void CameraMove();
+
+	void SetTarget(shared_ptr<GameObject> target) { _target = target; }
+	void SetOffset(const Vec3& offset) { _offset = offset; }
+private:
+	float _speed = 100.0f;
+
+	shared_ptr<GameObject> _target;
+	Vec3 _offset;
 };
 

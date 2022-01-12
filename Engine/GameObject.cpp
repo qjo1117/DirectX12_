@@ -4,6 +4,7 @@
 #include "MonoBehaviour.h"
 #include "MeshRenderer.h"
 #include "Camera.h"
+#include "Light.h"
 
 uint32 GameObject::ID = 0;
 
@@ -17,6 +18,7 @@ GameObject::GameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 
 GameObject::~GameObject()
 {
+
 }
 
 void GameObject::Init()
@@ -26,56 +28,56 @@ void GameObject::Init()
 
 void GameObject::Awake()
 {
-	for (shared_ptr<Component>& component : _components) {
+	for (const shared_ptr<Component>& component : _components) {
 		if (component) {
 			component->Awake();
 		}
 	}
-	for (shared_ptr<MonoBehaviour>& script : _scripts) {
-		if (script) {
-			script->Awake();
+	for (const pair<string, shared_ptr<MonoBehaviour>>& script : _scripts) {
+		if (script.second) {
+			script.second->Awake();
 		}
 	}
 }
 
 void GameObject::Start()
 {
-	for (shared_ptr<Component>& component : _components) {
+	for (const shared_ptr<Component>& component : _components) {
 		if (component) {
 			component->Start();
 		}
 	}
-	for (shared_ptr<MonoBehaviour>& script : _scripts) {
-		if (script) {
-			script->Start();
+	for (const pair<string, shared_ptr<MonoBehaviour>>& script : _scripts) {
+		if (script.second) {
+			script.second->Start();
 		}
 	}
 }
 
 void GameObject::Update()
 {
-	for (shared_ptr<Component>& component : _components) {
+	for (const shared_ptr<Component>& component : _components) {
 		if (component) {
 			component->Update();
 		}
 	}
-	for (shared_ptr<MonoBehaviour>& script : _scripts) {
-		if (script) {
-			script->Update();
+	for (const pair<string, shared_ptr<MonoBehaviour>>& script : _scripts) {
+		if (script.second) {
+			script.second->Update();
 		}
 	}
 }
 
 void GameObject::LateUpdate()
 {
-	for (shared_ptr<Component>& component : _components) {
+	for (const shared_ptr<Component>& component : _components) {
 		if (component) {
 			component->LateUpdate();
 		}
 	}
-	for (shared_ptr<MonoBehaviour>& script : _scripts) {
-		if (script) {
-			script->LateUpdate();
+	for (const pair<string, shared_ptr<MonoBehaviour>>& script : _scripts) {
+		if (script.second) {
+			script.second->LateUpdate();
 		}
 	}
 }
@@ -114,16 +116,9 @@ shared_ptr<Camera> GameObject::GetCamera()
 	return static_pointer_cast<Camera>(component);
 }
 
-void GameObject::AddComponent(shared_ptr<Component> component)
+shared_ptr<Light> GameObject::GetLight()
 {
-	/* ----- 컴포넌트의 주인을 알려주고 맵핑번호가 넘어가면 MonoBehaviour라고 취급 ----- */
-	component->SetGameObject(shared_from_this());
-
-	uint8 index = static_cast<uint8>(component->GetType());
-	if (index < FIXED_COMPONENT_COUNT) {
-		_components[index] = component;
-	}
-	else {
-		_scripts.push_back(dynamic_pointer_cast<MonoBehaviour>(component));
-	}
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::LIGHT);
+	return static_pointer_cast<Light>(component);
 }
+

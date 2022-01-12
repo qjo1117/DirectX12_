@@ -16,22 +16,10 @@ void SceneManager::Update()
 
 void SceneManager::Render()
 {
-	if (_currentScene == nullptr) {
-		return;
+	if (_currentScene) {
+		_currentScene->Render();
 	}
 
-	auto& sceneObjects = _currentScene->GetGameObjects();
-	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
-	for (auto& layerObjects : sceneObjects) {
-		// 렌더링이 가능한 녀석을 골라서 렌더링한다.q
-		for (auto& gameObject : layerObjects) {
-			if (gameObject->GetCamera() == nullptr) {
-				continue;
-			}
-
-			gameObject->GetCamera()->Render();
-		}
-	}
 }
 
 void SceneManager::LoadScene(SCENE_TYPE type)

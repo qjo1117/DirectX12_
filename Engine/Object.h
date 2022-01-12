@@ -29,7 +29,7 @@ public:
 	Object(OBJECT_TYPE type);
 	virtual ~Object();
 
-	Object GetType() { return _objectType; }
+	OBJECT_TYPE GetType() { return _objectType; }
 
 	void SetName(const wstring& name) { _name = name; }
 	const wstring& GetName() { return _name; }

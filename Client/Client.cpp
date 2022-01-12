@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "Client.h"
 #include "Game.h"
+#include "Engine.h"
 
 #define MAX_LOADSTRING 100
 
@@ -49,8 +50,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    GWindowInfo.width = 1026;
-    GWindowInfo.height = 640;
+    GWindowInfo.width = 1280;
+    GWindowInfo.height = 800;
     GWindowInfo.windowed = true;
 
     unique_ptr<Game> game = make_unique<Game>();
@@ -172,6 +173,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_SIZE:
+
         break;
 
     case WM_PAINT:

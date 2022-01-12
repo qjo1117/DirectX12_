@@ -30,7 +30,5 @@ void RotationXComponent::LateUpdate()
 
 void RotationXComponent::DrawGUI()
 {
-	if (ImGui::CollapsingHeader("RotationXComponent")) {
-		ImGui::DragFloat("Speed", &_speed, 0.1f, 0.0f, 10.0f);
-	}
+	ImGui::DragFloat("Speed", &_speed, 0.1f, 0.0f, 10.0f);
 }

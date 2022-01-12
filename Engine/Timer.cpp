@@ -49,11 +49,7 @@ void Timer::Update()
 
 void Timer::ShowFps()
 {
-<<<<<<< Updated upstream
-	uint32 fps = TIMER->GetFps();
-=======
 	uint32 fps = _fps;
->>>>>>> Stashed changes
 
 	WCHAR text[15] = L"";
 	::wsprintf(text, L"FPS : %d", fps);

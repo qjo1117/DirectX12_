@@ -1,79 +1,115 @@
 #include "pch.h"
 #include "Scene.h"
 #include "GameObject.h"
+#include "Camera.h"
+#include "Engine.h"
+#include "ConstantBuffer.h"
+#include "Light.h"
 
 Scene::Scene()
 {
+	_objects.reserve(1000);
 }
 
 Scene::~Scene()
 {
+	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
+	for (vector<shared_ptr<GameObject>>& gameObjects : _gameObjects) {
+		for (shared_ptr<GameObject>& obj : gameObjects) {
+			obj = nullptr;
+		}
+	}
+	for (shared_ptr<GameObject>& obj : _objects) {
+		obj = nullptr;
+	}
 }
 
 void Scene::Awake()
 {
-	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
-	for (const vector<shared_ptr<GameObject>>& gameObjects : _gameObjects) {
-		for (const shared_ptr<GameObject> obj : gameObjects) {
-			if (obj != nullptr) {
-				obj->Awake();
-			}
+	for (const shared_ptr<GameObject>& object : _objects) {
+		if (object == nullptr) {
+			continue;
 		}
+		object->Awake();
 	}
 }
 
 void Scene::Start()
 {
-	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
-	for (const vector<shared_ptr<GameObject>>& gameObjects : _gameObjects) {
-		for (const shared_ptr<GameObject> obj : gameObjects) {
-			if (obj != nullptr) {
-				obj->Start();
-			}
+	for (const shared_ptr<GameObject>& object : _objects) {
+		if (object == nullptr) {
+			continue;
 		}
+		object->Start();
 	}
 }
 
 void Scene::Update()
 {
-	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
-	for (const vector<shared_ptr<GameObject>>& gameObjects : _gameObjects) {
-		for (const shared_ptr<GameObject> obj : gameObjects) {
-			if (obj != nullptr) {
-				obj->Update();
-			}
+	for (const shared_ptr<GameObject>& object : _objects) {
+		if (object == nullptr) {
+			continue;
 		}
+		object->Update();
 	}
 }
 
 void Scene::LateUpdate()
 {
-	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
-	for (const vector<shared_ptr<GameObject>>& gameObjects : _gameObjects) {
-		for (const shared_ptr<GameObject> obj : gameObjects) {
-			if (obj != nullptr) {
-				obj->LateUpdate();
-			}
+	for (const shared_ptr<GameObject>& object : _objects) {
+		if (object == nullptr) {
+			continue;
 		}
+		object->LateUpdate();
 	}
 }
 
 void Scene::FinalUpdate()
 {
-	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
-	for (const vector<shared_ptr<GameObject>>& gameObjects : _gameObjects) {
-		for (const shared_ptr<GameObject> obj : gameObjects) {
-			if (obj != nullptr) {
-				obj->FinalUpdate();
-			}
+	for (const shared_ptr<GameObject>& object : _objects) {
+		if (object == nullptr) {
+			continue;
 		}
+		object->FinalUpdate();
 	}
+}
+
+void Scene::Render()
+{
+	PushLightData();
+
+	for (const shared_ptr<GameObject>& object : _objects) {
+		if (object->GetCamera() == nullptr) {
+			continue;
+		}
+		object->GetCamera()->Render();
+	}
+
+}
+
+void Scene::PushLightData()
+{
+	LightParam lightParams = {};
+
+	for (const shared_ptr<GameObject>& object : _objects) {
+		if (object->GetLight() == nullptr) {
+			continue;
+		}
+
+		const LightInfo& lightInfo = object->GetLight()->GetLightInfo();
+
+		lightParams.lights[lightParams.lightCount] = lightInfo;
+		lightParams.lightCount += 1;
+	}
+
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::GLOBAL)->SetGlobalData(&lightParams, sizeof(lightParams));
 }
 
 void Scene::AddGameObject(shared_ptr<GameObject> gameObject, uint32 layer)
 {
 	_gameObjects[layer].push_back(gameObject);
 	_objects.push_back(gameObject);
+	gameObject->SetLayer(layer);
 }
 
 void Scene::AddGameObject(shared_ptr<GameObject> gameObject, LAYER_TYPE layer)

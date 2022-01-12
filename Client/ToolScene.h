@@ -25,22 +25,40 @@ public:
 	virtual void LateUpdate() override;
 	virtual void FinalUpdate() override;
 
+	void Create();
+
 public:
 	/* ----- Test or GUI Function ----- */
-	void TestEditor();
-	void TestObjects();
+	void	TestEditor();
+	void	TestObjects();
 
-	void TestButtonCreateObject();
+	void	TestButtonCreateObject();
+
+	/* ----- 너무 길어서 각 컴포넌트 별로 함수를 만들어줌 ----- */
+	void	TransformComponent();
+	void	MeshRendererComponent();
+	void	CameraComponent();
+	void	LightComponent();
 
 private:
-	shared_ptr<GameObject> _pick;
+	void	RemoveSelectObject();
+	void	CreateCubeGameObject();
 
-	shared_ptr<GameObject> _player;
-	shared_ptr<GameObject> _camera;
+private:
+	/* ----- Fick Variable ----- */
+	shared_ptr<GameObject>	_pick;
+	int32					_isPick = -1;
+	shared_ptr<GameObject>	_dragPick;
 
-	shared_ptr<GameObject> _obj1;
-	shared_ptr<GameObject> _obj2;
+	shared_ptr<GameObject>	_player;
+	shared_ptr<GameObject>	_camera;
 
-	ToolState _state;
+	ToolState				_state;
+
+	Random					_random;
+
+	vector<function<void()>> _createList;
+
+	char						_text[50];
 };
 

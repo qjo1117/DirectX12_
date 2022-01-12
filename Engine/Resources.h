@@ -13,7 +13,10 @@ class Resources
 {
 public:
 	DECLARE_SINGLE(Resources)
+	using KeyObjMap = std::map<wstring, shared_ptr<Object>>;
+
 public:
+	// TODO 각 Load, Save함수를 구현해야함.
 	template<typename T>
 	shared_ptr<T> Load(const wstring& key, const wstring& path);
 
@@ -34,9 +37,10 @@ public:
 	shared_ptr<Mesh> LoadSphereMesh();
 	shared_ptr<Mesh> LoadQuadMesh();
 
+	KeyObjMap& GetResources(OBJECT_TYPE type) { return _resources[static_cast<uint32>(type)]; }
 
 private:
-	using KeyObjMap = std::map<wstring, shared_ptr<Object>>;
+
 	array<KeyObjMap, OBJECT_TYPE_COUNT> _resources;
 
 };

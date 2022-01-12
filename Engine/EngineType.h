@@ -23,7 +23,12 @@ struct Vertex
 	Vec3 tangent;
 };
 
-struct TransformMatrix
+struct TransformParams
 {
+	Matrix matWorld;
+	Matrix matView;
+	Matrix matProjection;
+	Matrix matWV;
 	Matrix matWVP;
 };
+

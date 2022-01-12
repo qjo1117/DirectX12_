@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EngineGUI.h"
 #include "Engine.h"
-#include "imgui_internal.h"
+#include <ImGui/imgui_internal.h>
 
 
 void EngineGUI::Init()
@@ -29,17 +29,18 @@ void EngineGUI::Init()
 	ImGuiViewportP* viewport = g.Viewports[0];
 	viewport->Size.x = GEngine->GetWindow().width;
 	viewport->Size.y = GEngine->GetWindow().height;
-	
+
 	/* ----- 현재 생각하는 GUI 갯수가 10이상은 아닐꺼같아서 10개로 미리 잡음 ----- */
 	_renderFuncs.reserve(10);
 }
 
 void EngineGUI::Render()
 {
+	// TODO:DELETE
 	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
 	CMD_LIST->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-	// Our state
 
+	
 	// Start the Dear ImGui frame
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -50,7 +51,7 @@ void EngineGUI::Render()
 	}
 
 	ImGui::Render();
-	
+
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), CMD_LIST.Get());
 }
 
@@ -65,3 +66,4 @@ void EngineGUI::AddFunction(function<void()> func)
 {
 	_renderFuncs.push_back(func);
 }
+

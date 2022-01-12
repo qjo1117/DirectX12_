@@ -14,13 +14,20 @@ enum class PROJECTION_TYPE
 class Camera : public Component
 {
 public:
+	/* ----- Constroct Function ----- */
 	Camera();
 	virtual ~Camera();
 
-
+	/* ----- External Function ----- */
 	virtual void FinalUpdate() override;
 	void Render();
 
+	/* ----- Helper Function ----- */
+	float GetNear() { return _near; }
+	float GetFar() { return _far; }
+
+	void SetNear(float value) { _near = value; }
+	void SetFar(float value) { _far = value; }
 private:
 	PROJECTION_TYPE _type = PROJECTION_TYPE::PERSPECTIVE;
 

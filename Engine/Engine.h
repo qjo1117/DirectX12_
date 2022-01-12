@@ -14,12 +14,9 @@
 
 #include "Input.h"
 #include "Timer.h"
-<<<<<<< Updated upstream
-=======
 #include "SceneManager.h"
 #include "EngineGUI.h"
 #include "Resources.h"
->>>>>>> Stashed changes
 
 /*-----------
 	Engine 
@@ -34,6 +31,8 @@ public:
 	void LateUpdate();
 	void End();
 
+	void ResizeWindow(int32 width, int32 height);
+
 public:
 	/* ----- Helper Function ----- */
 	shared_ptr<Device>				GetDevice() { return _device; }
@@ -45,18 +44,12 @@ public:
 	shared_ptr<EngineGUI>			GetGUI() { return _engineGUI; }
 	shared_ptr<ConstantBuffer>		GetConstantBuffer(CONSTANT_BUFFER_TYPE type) { return _constantBuffers[static_cast<uint8>(type)]; }
 
-<<<<<<< Updated upstream
-public:
-=======
 
 	const WindowInfo& GetWindow() { return _winInfo; }
 private:
->>>>>>> Stashed changes
 	/* ----- Render Function ----- */
 	void RenderBegin();
 	void RenderEnd();
-
-	void ResizeWindow(int32 width, int32 height);
 
 private:
 	void CreateConstantBuffer(CBV_REGISTER reg, uint32 bufferSize, uint32 count);

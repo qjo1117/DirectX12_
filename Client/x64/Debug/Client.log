@@ -1,9 +1,1 @@
-<<<<<<< Updated upstream
-﻿DirectXTex_debug.lib(DirectXTexD3D12.obj) : warning LNK4099: 'DirectXTex.pdb' PDB를 'DirectXTex_debug.lib(DirectXTexD3D12.obj)' 또는 'D:\Cpp\DirectX12\3_Input\Output\DirectXTex.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-  Client.vcxproj -> D:\Cpp\DirectX12\3_Input\Output\Client.exe
-=======
-﻿  ToolScene.cpp
-D:\Cpp\DirectX12\6_Resources\Client\ToolScene.cpp(317,58): warning C4244: '인수': 'int32'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\Cpp\DirectX12\6_Resources\Client\ToolScene.cpp(317,46): warning C4244: '인수': 'int32'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Client.vcxproj -> D:\Cpp\DirectX12\6_Resources\Output\Client.exe
->>>>>>> Stashed changes
+﻿  Client.vcxproj -> D:\Cpp\DirectX12\8_NormalMapping\Output\Client.exe

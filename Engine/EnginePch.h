@@ -12,6 +12,8 @@
 #include <list>
 #include <map>
 #include <functional>
+#include <thread>
+#include <cmath>
 
 using namespace std;
 
@@ -65,8 +67,11 @@ using Matrix	= DirectX::SimpleMath::Matrix;
 #include "EngineType.h"
 #include "Enum.h"
 
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx12.h"
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_impl_win32.h>
+#include <ImGui/imgui_impl_dx12.h>
+
+#include "magic_enum.hpp"
+#include "Utils.h"
 
 extern unique_ptr<class Engine> GEngine;
