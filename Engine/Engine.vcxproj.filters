@@ -31,6 +31,9 @@
     <Filter Include="Utils\UserUtils">
       <UniqueIdentifier>{5689acdf-bd7f-4f6d-b633-661270d250d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Shape">
+      <UniqueIdentifier>{0be7c49e-ab01-4892-8a3b-8cb53c461af9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -158,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="Random.cpp">
       <Filter>Utils\UserUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Object\Shape</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,6 +302,9 @@
     <ClInclude Include="Random.h">
       <Filter>Utils\UserUtils</Filter>
     </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Object\Shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resources\Shader\default.hlsli">
@@ -314,6 +323,12 @@
       <Filter>Utils\UserUtils</Filter>
     </None>
     <None Include="..\Resources\Shader\SimpleTexture.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\Resources\Shader\skybox.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\Resources\Shader\wirefram.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

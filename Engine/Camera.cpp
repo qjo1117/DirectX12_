@@ -35,6 +35,8 @@ void Camera::FinalUpdate()
 
 	S_MatView = _matView;
 	S_MatProjection = _matProjection;
+
+	_frustum.FinalUpdate();
 }
 
 void Camera::Render()
@@ -42,7 +44,7 @@ void Camera::Render()
 	shared_ptr<Scene> scene = GET_SINGLE(SceneManager)->GetCurrentScene();
 
 	// Auto를 하는 이유 : 명시하기에는 너무 강한 적
-	auto sceneObjects = scene->GetGameObjects();
+	auto& sceneObjects = scene->GetGameObjects();
 
 	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
 	for (auto& layerObjects : sceneObjects) {
@@ -50,6 +52,16 @@ void Camera::Render()
 		for (auto& gameObject : layerObjects) {
 			if (gameObject->GetMeshRenderer() == nullptr) {
 				continue;
+			}
+			if (gameObject->GetActive() == false) {
+				continue;
+			}
+
+			if (gameObject->GetCheckFrustum() == true) {		// 컬링 대상인지 확인한다.
+				if (_frustum.ContainSphere(gameObject->GetTransform()->GetLocalPosition(),
+					/*Bound Vulme 넣어야함*/gameObject->GetTransform()->GetBoundingSphereRadius()) == false) {
+					continue;
+				}
 			}
 
 			gameObject->GetMeshRenderer()->Render();

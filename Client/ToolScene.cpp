@@ -28,7 +28,8 @@ ToolScene::ToolScene()
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
+		shader->Init(L"..\\Resources\\Shader\\wirefram.hlsli",
+			{ RASTERIZER_TYPE::WIREFRAM, DEPTH_STENCIL_TYPE::LESS });
 		material->SetShader(shader);
 
 		// BaseColor
@@ -69,6 +70,14 @@ ToolScene::ToolScene()
 		material->SetShader(shader);
 
 		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
+		// BaseColor
+		shared_ptr<Texture> texture = make_shared<Texture>();
+		texture->Init(L"..\\Resources\\Texture\\Metal.jpg");
+		material->SetTexture(0, texture);
+		// Normal
+		shared_ptr<Texture> textureNormal = make_shared<Texture>();
+		textureNormal->Init(L"..\\Resources\\Texture\\Metal_Normal.jpg");
+		material->SetTexture(1, textureNormal);
 
 		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
 		renderer->SetMesh(mesh);
@@ -79,6 +88,35 @@ ToolScene::ToolScene()
 
 		go->AddComponent(renderer);
 		AddGameObject(go, LAYER_TYPE::DEFAULT);
+	}
+#pragma endregion
+
+#pragma region SkyBox
+	{
+		shared_ptr<GameObject> skybox = make_shared<GameObject>();
+		skybox->AddComponent(make_shared<Transform>());
+
+		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+		{
+			meshRenderer->SetMesh(GET_SINGLE(Resources)->LoadCubeMesh());
+		}
+		{
+			shared_ptr<Shader> shader = make_shared<Shader>();
+			shared_ptr<Texture> texture = make_shared<Texture>();
+
+			shader->Init(L"..\\Resources\\Shader\\skybox.hlsli",
+				{ RASTERIZER_TYPE::CULL_NONE, DEPTH_STENCIL_TYPE::LESS_EQUAL });
+			texture->Init(L"..\\Resources\\Texture\\SkyBox_1.jpg");
+
+			shared_ptr<Material> material = make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			meshRenderer->SetMaterial(material);
+		}
+		skybox->AddComponent(meshRenderer);
+		skybox->SetCheckFrustum(false);
+		AddGameObject(skybox, LAYER_TYPE::SKYBOX);
+
 	}
 #pragma endregion
 
@@ -244,7 +282,10 @@ void ToolScene::TestEditor()
 	{
 		static char strTemp[50] = {};
 		::sprintf_s(strTemp, "%s", _pick->GetGUIName().data());
-		ImGui::Text(_pick->GetGUIName().data());		// 이름을 보여줌
+
+		bool active = _pick->GetActive();
+		ImGui::Checkbox(_pick->GetGUIName().data(), &active);
+		_pick->SetActive(active);
 
 		ImGui::SameLine();
 
@@ -308,7 +349,6 @@ void ToolScene::TestObjects()
 	ImGui::SetWindowSize("ObjectList", ImVec2(200, 600));
 
 	ImGuiIO& io = ImGui::GetIO();
-
 
 	if (ImGui::TreeNode("Tool Scene Object List")) {
 		uint32 count = 0;

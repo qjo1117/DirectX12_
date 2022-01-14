@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-
+#include "Frustum.h"
 
 enum class PROJECTION_TYPE
 {
@@ -39,8 +39,10 @@ private:
 	Matrix _matView = {};
 	Matrix _matProjection = {};
 
+	Frustum _frustum;
+
 public:
-	static Matrix S_MatView;			// 한놈만 필요헤서 쓰는 녀석
+	static Matrix S_MatView;			
 	static Matrix S_MatProjection;		// 외부에서 쓰기 편하게 만든녀석
 };
 

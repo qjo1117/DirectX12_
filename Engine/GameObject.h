@@ -47,11 +47,17 @@ public:
 	shared_ptr<T> GetOrAddComponent();
 
 	/* ----- Helper Function ----- */
-	const string& GetGUIName() { return _guiName; }
-	void SetGUIName(const string& name) { _guiName = name; }
+	const string&	GetGUIName() { return _guiName; }
+	void			SetGUIName(const string& name) { _guiName = name; }
 
-	uint32 GetLayer() { return _layerType; }
-	void SetLayer(uint32 type) { _layerType = type; }
+	uint32			GetLayer() { return _layerType; }
+	void			SetLayer(uint32 type) { _layerType = type; }
+
+	bool			GetCheckFrustum() { return _isFrustum; }
+	void			SetCheckFrustum(bool check) { _isFrustum = check; }
+
+	bool			GetActive() { return _isActive; }
+	void			SetActive(bool active) { _isActive = active; }
 private:
 	uint32 _layerType = 0;
 
@@ -61,6 +67,8 @@ private:
 
 	string _guiName = "Unknown";
 
+	bool _isFrustum = true;
+	bool _isActive = true;
 public:
 	static uint32 ID;
 };

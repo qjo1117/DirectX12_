@@ -27,9 +27,14 @@ Scene::~Scene()
 void Scene::Awake()
 {
 	for (const shared_ptr<GameObject>& object : _objects) {
-		if (object == nullptr) {
+		if (object == nullptr) {		// 이건 바로 삭제하지않고 FinalUpdate부분에서 삭제 요청 처리를
+										// 처리하는 부분이 추가되면 nullptr문제가 없을테니 빼자
 			continue;
 		}
+		if (object->GetActive() == false) {
+			continue;
+		}
+
 		object->Awake();
 	}
 }
@@ -38,6 +43,10 @@ void Scene::Start()
 {
 	for (const shared_ptr<GameObject>& object : _objects) {
 		if (object == nullptr) {
+			continue;
+		}
+
+		if (object->GetActive() == false) {
 			continue;
 		}
 		object->Start();
@@ -50,6 +59,11 @@ void Scene::Update()
 		if (object == nullptr) {
 			continue;
 		}
+
+		if (object->GetActive() == false) {
+			continue;
+		}
+
 		object->Update();
 	}
 }
@@ -60,6 +74,11 @@ void Scene::LateUpdate()
 		if (object == nullptr) {
 			continue;
 		}
+
+		if (object->GetActive() == false) {
+			continue;
+		}
+
 		object->LateUpdate();
 	}
 }
@@ -68,6 +87,10 @@ void Scene::FinalUpdate()
 {
 	for (const shared_ptr<GameObject>& object : _objects) {
 		if (object == nullptr) {
+			continue;
+		}
+
+		if (object->GetActive() == false) {
 			continue;
 		}
 		object->FinalUpdate();
@@ -82,6 +105,7 @@ void Scene::Render()
 		if (object->GetCamera() == nullptr) {
 			continue;
 		}
+
 		object->GetCamera()->Render();
 	}
 
