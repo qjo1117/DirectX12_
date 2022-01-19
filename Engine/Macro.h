@@ -11,6 +11,10 @@
 #define INPUT				GET_SINGLE(Input)
 #define GUI					GEngine->GetGUI()
 
+#define BASE_PATH           "BasePath"
+#define TEXTRUE_PATH        "Texture"
+#define SHADER_PATH         "Shader"
+
 #define DECLARE_SINGLE(type)		\
 private:							\
 	type() {}						\
@@ -23,6 +27,8 @@ public:								\
 	}								\
 
 #define GET_SINGLE(type)		type::GetI()
+
+#define WEAK(T) T.lock()
 
 /* ------ 제공 : Utils Forever ------ */
 // magic_enum도 있긴 있지만 이해한 코드를 쓰는게 좋을 것 같아서 사용합니다.

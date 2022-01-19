@@ -18,37 +18,37 @@ public:
 	Random() { Init(); }
 
 	void Init() {
-		index = 0;
+		_index = 0;
 		uint64 seed = static_cast<uint64>(time(nullptr));
 		for (int32 i = 0; i < 16; ++i) {
-			state[i] = seed;
+			_state[i] = seed;
 			seed += seed + DIFFER_VALUE;
 		}
 	}
 
 	void Init(uint64 uSeed) {
-		index = 0;
+		_index = 0;
 		uint64 seed = uSeed;
 		for (int32 i = 0; i < 16; ++i) {
-			state[i] = seed;
+			_state[i] = seed;
 			seed += seed + DIFFER_VALUE;
 		}
 	}
 
 public:
 	uint64 Randint(void) {
-		uint64 a = state[index];
-		uint64 c = state[(index + 13) & 15];
+		uint64 a = _state[_index];
+		uint64 c = _state[(_index + 13) & 15];
 		uint64 b = a ^ c ^ (a << 16) ^ (c << 15);
-		c = state[(index + 9) & 15];
+		c = _state[(_index + 9) & 15];
 		c ^= (c >> 11);
-		a = state[index] = b ^ c;
+		a = _state[_index] = b ^ c;
 		uint64 d = a ^ ((a << 5) & 0xda442d24U);
-		index = (index + 15) & 15;
-		a = state[index];
-		state[index] = a ^ b ^ d ^ (a << 2) ^ (b << 18) ^ (c << 28);
+		_index = (_index + 15) & 15;
+		a = _state[_index];
+		_state[_index] = a ^ b ^ d ^ (a << 2) ^ (b << 18) ^ (c << 28);
 
-		return state[index];
+		return _state[_index];
 	}
 
 	uint64 Randint(uint64 min, uint64 max) {
@@ -67,6 +67,6 @@ public:
 
 private:
 
-	uint64 index = 0;
-	uint64 state[16] = { 0 };
+	uint64 _index = 0;
+	uint64 _state[16] = { 0 };
 };

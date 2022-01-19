@@ -12,15 +12,16 @@ Billboard::Billboard()
 
 Billboard::~Billboard()
 {
+
 }
 
 void Billboard::Awake()
 {
-	if (_scene == nullptr) {
+	if (_scene.lock() == nullptr) {
 		_scene = GET_SINGLE(SceneManager)->GetCurrentScene();
 	}
 	// Camera Index에 첫번째 있는 오브젝트가 메인이라고 생각한다.
-	_camera = _scene->GetGameObjects(LAYER_TYPE::CAMERA)[0];
+	_camera = WEAK(_scene)->GetGameObjects(LAYER_TYPE::CAMERA)[0];
 
 
 }
@@ -32,9 +33,6 @@ void Billboard::Start()
 
 void Billboard::Update()
 {
-	if (_camera) {
-
-	}
 
 }
 

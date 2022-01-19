@@ -31,7 +31,7 @@ struct LightInfo
 };
 
 // 실제로 Shader코드에 입력될 구조체
-struct LightParam
+struct LightParams
 {
 	uint32		lightCount;
 	Vec3		padding;
@@ -50,6 +50,7 @@ public:
 
 	/* ----- virtual Function ----- */
 	virtual void FinalUpdate() override;
+	void Render();
 
 public:
 	/* ----- Helper Function ----- */
@@ -65,15 +66,22 @@ public:
 	const Vec4& GetAmbient() { return _lightInfo.color.ambient; }
 	const Vec4& GetSpecular() { return _lightInfo.color.specular; }
 
-	void SetLightType(LIGHT_TYPE type) { _lightInfo.lightType = static_cast<int32>(type); }
+	void SetLightType(LIGHT_TYPE type);
 	void SetLightRange(float range) { _lightInfo.range = range; }
 	void SetLightAngle(float angle) { _lightInfo.angle = angle; }
 
 	const float& GetRange() { return _lightInfo.range; }
 	const float& GetAngle() { return _lightInfo.angle; }
 
+	void SetLightIndex(int8 index) { _lightIndex = index; }
+
+
 private:
 	/* ----- LightInfo Variable ----- */
-	LightInfo _lightInfo = {};
+	LightInfo					_lightInfo = {};
+
+	int8						_lightIndex = -1;
+	shared_ptr<class Mesh>		_volumeMesh;
+	shared_ptr<class Material>	_lightMaterial;
 };
 

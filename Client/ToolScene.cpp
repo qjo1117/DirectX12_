@@ -12,35 +12,46 @@
 #include "EngineGUI.h"
 #include "Resources.h"
 #include "PlayerController.h"
+#include "PathManager.h"
 #include "Light.h"
 #include "Utils.h"
 #include "Billboard.h"
+#include "RenderTargetGroup.h"
 
 ToolScene::ToolScene()
 {
+#pragma region SkyBox
+	{
+		shared_ptr<GameObject> skybox = make_shared<GameObject>();
+		skybox->AddComponent(make_shared<Transform>());
+
+		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+		{
+			meshRenderer->SetMesh(GET_SINGLE(Resources)->LoadCubeMesh());
+		}
+		{
+			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Skybox");
+			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Skybox", L"..\\Resources\\Texture\\SkyBox_1.jpg");
+			material->SetTexture(0, texture);
+			meshRenderer->SetMaterial(material);
+		}
+		skybox->AddComponent(meshRenderer);
+		skybox->SetCheckFrustum(false);
+		AddGameObject(skybox, LAYER_TYPE::SKYBOX);
+
+	}
+#pragma endregion
 
 #pragma region Player
 	{
 		shared_ptr<GameObject> go = make_shared<GameObject>();
 		go->Init();
-		go->SetGUIName("Player");
+		go->SetGUIName(L"Player");
 
 		shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"..\\Resources\\Shader\\wirefram.hlsli",
-			{ RASTERIZER_TYPE::WIREFRAM, DEPTH_STENCIL_TYPE::LESS });
+		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Deferred");
 		material->SetShader(shader);
-
-		// BaseColor
-		shared_ptr<Texture> texture = make_shared<Texture>();
-		texture->Init(L"..\\Resources\\Texture\\Stylized.jpg");
-		material->SetTexture(0, texture);
-		// Normal
-		shared_ptr<Texture> textureNormal = make_shared<Texture>();
-		textureNormal->Init(L"..\\Resources\\Texture\\Stylized_Normal.jpg");
-		material->SetTexture(1, textureNormal);
-
 		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
 
 		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
@@ -65,19 +76,13 @@ ToolScene::ToolScene()
 
 		shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-		material->SetShader(shader);
+		material->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Deferred"));
 
 		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
 		// BaseColor
-		shared_ptr<Texture> texture = make_shared<Texture>();
-		texture->Init(L"..\\Resources\\Texture\\Metal.jpg");
-		material->SetTexture(0, texture);
+		material->SetTexture(0, GET_SINGLE(Resources)->Load<Texture>(L"Metal", L"..\\Resources\\Texture\\Metal.jpg"));
 		// Normal
-		shared_ptr<Texture> textureNormal = make_shared<Texture>();
-		textureNormal->Init(L"..\\Resources\\Texture\\Metal_Normal.jpg");
-		material->SetTexture(1, textureNormal);
+		material->SetTexture(1, GET_SINGLE(Resources)->Load<Texture>(L"MetalNormal", L"..\\Resources\\Texture\\Metal_Normal.jpg"));
 
 		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
 		renderer->SetMesh(mesh);
@@ -91,129 +96,112 @@ ToolScene::ToolScene()
 	}
 #pragma endregion
 
-#pragma region SkyBox
-	{
-		shared_ptr<GameObject> skybox = make_shared<GameObject>();
-		skybox->AddComponent(make_shared<Transform>());
-
-		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-		{
-			meshRenderer->SetMesh(GET_SINGLE(Resources)->LoadCubeMesh());
-		}
-		{
-			shared_ptr<Shader> shader = make_shared<Shader>();
-			shared_ptr<Texture> texture = make_shared<Texture>();
-
-			shader->Init(L"..\\Resources\\Shader\\skybox.hlsli",
-				{ RASTERIZER_TYPE::CULL_NONE, DEPTH_STENCIL_TYPE::LESS_EQUAL });
-			texture->Init(L"..\\Resources\\Texture\\SkyBox_1.jpg");
-
-			shared_ptr<Material> material = make_shared<Material>();
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			meshRenderer->SetMaterial(material);
-		}
-		skybox->AddComponent(meshRenderer);
-		skybox->SetCheckFrustum(false);
-		AddGameObject(skybox, LAYER_TYPE::SKYBOX);
-
-	}
-#pragma endregion
-
-#pragma region Camera
+#pragma region Main Camera
 	{
 		shared_ptr<GameObject> go = make_shared<GameObject>();
 		go->AddComponent(make_shared<Transform>());
 		go->AddComponent(make_shared<Camera>());
 		go->AddComponent(make_shared<CameraController>());
-
-		go->SetName(L"MainCamera");
-		go->SetGUIName("MainCamera");
+		go->SetGUIName(L"MainCamera");
 		_camera = go;
 		_camera->GetTransform()->SetLocalPosition(Vec3(0.0f, 100.f, 0.0f));
 		AddGameObject(_camera, LAYER_TYPE::CAMERA);
+
+		_camera->GetCamera()->SetCullingMaskLayerOnOff(LAYER_TYPE::UI, true); // UI는 안찍음
 	}
 #pragma endregion
 
-#pragma region White Directional Light
+#pragma region UI Camera
+	{
+		shared_ptr<GameObject> go = make_shared<GameObject>();
+		go = go;
+
+		go->AddComponent(make_shared<Transform>());
+		go->AddComponent(make_shared<Camera>());
+
+		go->SetGUIName(L"UI_Camera");
+
+		go->GetTransform()->SetLocalPosition(Vec3(0.0f, 0.0f, 0.0f));
+		go->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
+
+		go->GetCamera()->SetCullingMaskAll();
+		go->GetCamera()->SetCullingMaskLayerOnOff(LAYER_TYPE::UI, false);	// UI만 찍음
+
+		AddGameObject(go, LAYER_TYPE::CAMERA);
+	}
+#pragma endregion
+
+
+#pragma region UI_Test
+	{
+		for (int32 i = 0; i < 5; ++i) {
+			shared_ptr<GameObject> sphere = make_shared<GameObject>();
+			sphere->SetGUIName("RenderTarget" + std::to_string(i));
+			sphere->AddComponent(make_shared<Transform>());
+			sphere->GetTransform()->SetLocalPosition(Vec3(-350.0f + (i * 200.0f), 350.0f, 500.0f));
+			sphere->GetTransform()->SetLocalScale(Vec3(100.0f, 100.0f, 100.0f));
+
+			shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+			meshRenderer->SetMesh(GET_SINGLE(Resources)->LoadRectangleMesh());
+
+			{
+				shared_ptr<Texture> texture;
+				if (i < 3) {
+					texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->GetRTTexture(i);
+				}
+				else {
+					texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->GetRTTexture(i - 3);
+				}
+
+				shared_ptr<Material> material = make_shared<Material>();
+				material->SetTexture(0, texture);
+				material->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Texture"));
+				meshRenderer->SetMaterial(material);
+			}
+
+			sphere->AddComponent(meshRenderer);
+			AddGameObject(sphere, LAYER_TYPE::UI);
+		}
+	}
+#pragma endregion
+
+#pragma region Directional Light
 	{
 		shared_ptr<GameObject> light = make_shared<GameObject>();
-		light->SetGUIName("Directional Light");
+		light->SetGUIName(L"Directional Light");
 		light->AddComponent(make_shared<Transform>());
-		light->GetTransform()->SetLocalScale(Vec3(20.0f, 20.0f, 20.0f));
-
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"..\\Resources\\Shader\\SimpleTexture.hlsli");
-		material->SetShader(shader);
-
-		shared_ptr<Texture> texture = make_shared<Texture>();
-		texture->Init(L"..\\Resources\\Texture\\Light.png");
-		material->SetTexture(0, texture);
-		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadQuadMesh();
-
-		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
-		renderer->SetMesh(mesh);
-		renderer->SetMaterial(material);
-
-		light->AddComponent(renderer);
-
+		//light->GetTransform()->SetLocalPosition(Vec3(0.f, 150.f, 150.f));
 		light->AddComponent(make_shared<Light>());
-		light->GetLight()->SetLightDirection(Vec3(0.f, -1.f, 0.f));
+		light->GetLight()->SetLightDirection(Vec3(1.0f, -1.0f, 1.f));
 		light->GetLight()->SetLightType(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-		light->GetLight()->SetDiffuse(Vec3(0.5f, 0.5f, 0.5f));
+		light->GetLight()->SetDiffuse(Vec3(0.7f, 0.5f, 0.6f));
 		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
-		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
-
-		light->AddComponent(make_shared<Billboard>());
+		light->GetLight()->SetSpecular(Vec3(0.2f, 0.2f, 0.2f));
 
 		AddGameObject(light);
 	}
-
 #pragma endregion
 
-//#pragma region Red Point Light
-//	{
-//		shared_ptr<GameObject> light = make_shared<GameObject>();
-//		light->SetGUIName("Point Light");
-//
-//		light->AddComponent(make_shared<Transform>());
-//		light->GetTransform()->SetLocalPosition(Vec3(150.f, 150.f, 150.f));
-//		light->AddComponent(make_shared<Light>());
-//		//light->GetLight()->SetLightDirection(Vec3(0.f, -1.f, 0.f));
-//		light->GetLight()->SetLightType(LIGHT_TYPE::POINT_LIGHT);
-//		light->GetLight()->SetDiffuse(Vec3(1.f, 0.1f, 0.1f));
-//		light->GetLight()->SetAmbient(Vec3(0.1f, 0.f, 0.f));
-//		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
-//		light->GetLight()->SetLightRange(10000.f);
-//		//light->GetLight()->SetLightAngle(XM_PI / 4);
-//		AddGameObject(light);
-//	}
-//#pragma endregion
-//
-//#pragma region Blue Spot Light
-//	{
-//		shared_ptr<GameObject> light = make_shared<GameObject>();
-//		light->SetGUIName("Spot Light");
-//
-//		light->AddComponent(make_shared<Transform>());
-//		light->GetTransform()->SetLocalPosition(Vec3(-150.f, 0.f, 150.f));
-//		light->AddComponent(make_shared<Light>());
-//		light->GetLight()->SetLightDirection(Vec3(1.f, 0.f, 0.f));
-//		light->GetLight()->SetLightType(LIGHT_TYPE::SPOT_LIGHT);
-//		light->GetLight()->SetDiffuse(Vec3(0.f, 0.1f, 1.f));
-//		//light->GetLight()->SetAmbient(Vec3(0.f, 0.f, 0.1f));
-//		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
-//		light->GetLight()->SetLightRange(10000.f);
-//		light->GetLight()->SetLightAngle(XM_PI / 4);
-//		AddGameObject(light);
-//	}
-//#pragma endregion
+#pragma region Point Light
+	{
+		shared_ptr<GameObject> light = make_shared<GameObject>();
+		light->SetGUIName(L"Point Light");
+		light->AddComponent(make_shared<Transform>());
+		light->GetTransform()->SetLocalPosition(Vec3(0.f, 50.f, -50.f));
+		light->GetTransform()->SetLocalScale(Vec3(1.0f, 1.0f, 1.0f));
+		light->AddComponent(make_shared<Light>());
+		light->GetLight()->SetLightType(LIGHT_TYPE::POINT_LIGHT);
+		light->GetLight()->SetDiffuse(Vec3(0.0f, 0.5f, 0.0f));
+		light->GetLight()->SetAmbient(Vec3(0.0f, 0.3f, 0.0f));
+		light->GetLight()->SetSpecular(Vec3(0.0f, 0.3f, 0.0f));
+		light->GetLight()->SetLightRange(200.0f);
+
+		AddGameObject(light);
+	}
+#pragma endregion
+
 
 	GEngine->GetCmdQueue()->WaitSync();
-
-	GET_SINGLE(Resources)->LoadQuadMesh();
 
 	/* ----- 바인딩 부분 ----- */
 	GUI->AddFunction([=]() { TestEditor(); });
@@ -223,6 +211,9 @@ ToolScene::ToolScene()
 
 ToolScene::~ToolScene()
 {
+	_pick = nullptr;
+	_player = nullptr;
+	_camera = nullptr;
 }
 
 void ToolScene::Awake()
@@ -326,15 +317,20 @@ void ToolScene::TestEditor()
 		}
 	}
 
-	//// Test Image
+	// Test Image
 	//{
 	//	if (_pick->GetFixedComponent(COMPONENT_TYPE::MESH_RENDERER) == nullptr) {
 	//		ImGui::End();
 	//		return;
 	//	}
-	//	D3D12_GPU_DESCRIPTOR_HANDLE gpuPtr = GEngine->GetTableDescHeap()->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
-	//	ImGui::Text("GPU handle = %p", gpuPtr.ptr);
-	//	ImGui::Image((void*)((intptr_t)gpuPtr.ptr), ImVec2(100.0f, 100.0f), ImVec2(0.0f, 0.0f), ImVec2(0.5f, 1.0f));
+	//	D3D12_GPU_DESCRIPTOR_HANDLE my_texture_srv_gpu_handle = GEngine->GetTableDescHeap()->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
+	//	//my_texture_srv_gpu_handle.ptr += DEVICE->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	//	shared_ptr<Texture> texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->GetRTTexture(2);
+	//	//io.Fonts->TexID = (ImTextureID)my_texture_srv_gpu_handle.ptr;
+	//	ImGui::Text("GPU handle = %p", (ImTextureID)my_texture_srv_gpu_handle.ptr);
+	//	ImGui::Image((ImTextureID)texture->GetSRV()->GetGPUDescriptorHandleForHeapStart().ptr, ImVec2(100.0f, 100.0f));
+	//	ImGui::ImageButton((ImTextureID)my_texture_srv_gpu_handle.ptr, ImVec2(100.0f, 100.0f));
 	//}
 	//
 	// 이 코드의 문제점. GUI Fonts GetTexID만 보여주고 있음.
@@ -522,9 +518,11 @@ void ToolScene::MeshRendererComponent()
 {
 	if (ImGui::CollapsingHeader("MeshRenderer")) {
 		for (const pair<wstring, shared_ptr<Object>>& mesh : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::MESH)) {
-			string name;
-			name.assign(mesh.first.begin(), mesh.first.end());
-			if (ImGui::Button(name.c_str())) {
+			const wchar_t* wName = mesh.first.data();
+			char strName[MAX_PATH]; 
+			::memset(strName, 0, MAX_PATH); 
+			::WideCharToMultiByte(CP_ACP, 0, wName, -1, strName, lstrlenW(wName), 0, 0);
+			if (ImGui::Button(strName)) {
 				_pick->GetMeshRenderer()->SetMesh(static_pointer_cast<Mesh>(mesh.second));
 			}
 		}
@@ -534,14 +532,18 @@ void ToolScene::MeshRendererComponent()
 void ToolScene::CameraComponent()
 {
 	if (ImGui::CollapsingHeader("Camera")) {
+		// TODO : 직교랑 절두랑 분기를 시켜줘야한다.
 		float cameraNear = _pick->GetCamera()->GetNear();
 		float cameraFar = _pick->GetCamera()->GetFar();
+		float cameraFov = _pick->GetCamera()->GetFov();
 
 		ImGui::SliderFloat("Near", &cameraNear, 0.1f, cameraFar - 1);
 		ImGui::SliderFloat("Far", &cameraFar, cameraNear + 1, 10000.0f);
+		ImGui::SliderFloat("Fov", &cameraFov, 0.0f, XM_PI);
 
 		_pick->GetCamera()->SetNear(cameraNear);
 		_pick->GetCamera()->SetFar(cameraFar);
+		_pick->GetCamera()->SetFov(cameraFov);
 	}
 }
 
@@ -585,7 +587,7 @@ void ToolScene::LightComponent()
 
 			vecTemp = info.direction;
 			floatTemp[0] = vecTemp.x; floatTemp[1] = vecTemp.y; floatTemp[2] = vecTemp.z;
-			ImGui::DragFloat3("DirectionLight", floatTemp, dragSpeed, -2 *XM_PI, 2 * XM_PI);
+			ImGui::DragFloat3("DirectionLight", floatTemp, dragSpeed, -2 * XM_PI, 2 * XM_PI);
 			light->SetLightDirection(Vec3(floatTemp[0], floatTemp[1], floatTemp[2]));
 
 			floatTemp[0] = 0.0f;
@@ -623,7 +625,7 @@ void ToolScene::RemoveSelectObject()
 	if (_pick != nullptr) {
 		RemoveObject(_pick);
 		_isPick = -1;
-		_pick == nullptr;
+		_pick = nullptr;
 	}
 }
 
@@ -632,11 +634,9 @@ void ToolScene::CreateCubeGameObject()
 	shared_ptr<GameObject> go = make_shared<GameObject>();
 	go->Init();
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
-	shared_ptr<Shader> shader = make_shared<Shader>();
-	shader->Init(L"..\\Resources\\Shader\\default.hlsli");
 
 	shared_ptr<Material> material = make_shared<Material>();
-	material->SetShader(shader);
+	material->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Deferred"));
 
 	shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
 	renderer->SetMaterial(material);

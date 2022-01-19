@@ -5,6 +5,7 @@
 #include "Engine.h"
 #include "ConstantBuffer.h"
 #include "Light.h"
+#include "Resources.h"
 
 Scene::Scene()
 {
@@ -101,26 +102,77 @@ void Scene::Render()
 {
 	PushLightData();
 
-	for (const shared_ptr<GameObject>& object : _objects) {
-		if (object->GetCamera() == nullptr) {
+	/* ----- CommandQueue에서 이전해옴 ----- */
+	int8 backIndex = GEngine->GetSwapChain()->GetBackBufferIndex();
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->ClearRenderTargetView(backIndex);
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->ClearRenderTargetView();
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->ClearRenderTargetView();
+
+	// MainCamera가 렌더링을 해준다.
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->OMSetRenderTargets();
+
+	// 0번을 메인카메라라고 지정을 하고 나머지 Deferred에 필요한 RTV를 준비한다.
+	shared_ptr<Camera> mainCamera = _gameObjects[static_cast<uint8>(LAYER_TYPE::CAMERA)][0]->GetCamera();
+	mainCamera->SortGameObject();
+	mainCamera->Render_Deferred();
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->WaitTargetToResource();
+
+	RenderLights();
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->WaitTargetToResource();
+
+	RenderFinal();
+
+	//mainCamera->Render_Forward();
+
+	// UI, Forward를 그려준다.
+	for (const auto& camera : _gameObjects[static_cast<uint8>(LAYER_TYPE::CAMERA)]) {
+		if(camera->GetCamera() == nullptr) {
+			continue;
+		}
+		if (camera->GetActive() == false) {
+			continue;
+		}
+		if (camera->GetCamera() == mainCamera) {
 			continue;
 		}
 
-		object->GetCamera()->Render();
+		camera->GetCamera()->SortGameObject();
+		camera->GetCamera()->Render_Forward();
 	}
+}
 
+void Scene::RenderLights()
+{
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->OMSetRenderTargets();
+
+	// 광원을 그린다.
+	for (const shared_ptr<GameObject>& light : _gameObjects[static_cast<uint8>(LAYER_TYPE::LIGHT)]) {
+		light->GetLight()->Render();
+	}
+}
+
+void Scene::RenderFinal()
+{
+	int8 backIndex = GEngine->GetSwapChain()->GetBackBufferIndex();
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->OMSetRenderTargets(1, backIndex);
+
+	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Final");
+	material->PushData();
+	GET_SINGLE(Resources)->Get<Mesh>(L"Rectangle")->Render();
 }
 
 void Scene::PushLightData()
 {
-	LightParam lightParams = {};
+	LightParams lightParams = {};
 
-	for (const shared_ptr<GameObject>& object : _objects) {
-		if (object->GetLight() == nullptr) {
+	for (const shared_ptr<GameObject>& light : _gameObjects[static_cast<uint8>(LAYER_TYPE::LIGHT)]) {
+		if (light->GetLight() == nullptr) {
 			continue;
 		}
 
-		const LightInfo& lightInfo = object->GetLight()->GetLightInfo();
+		const LightInfo& lightInfo = light->GetLight()->GetLightInfo();
+
+		light->GetLight()->SetLightIndex(lightParams.lightCount);		// 몇번째 빛인지 알려준다.
 
 		lightParams.lights[lightParams.lightCount] = lightInfo;
 		lightParams.lightCount += 1;
@@ -131,6 +183,16 @@ void Scene::PushLightData()
 
 void Scene::AddGameObject(shared_ptr<GameObject> gameObject, uint32 layer)
 {
+	/* ----- 주의사항 ----- */
+	// Camera, Light는 따로 순회해서 처리해야하는 작업이 있으므로 따로 빼서 LAYER에 강제로 넣어준다.
+
+	if (gameObject->GetLight()) {
+		layer = static_cast<uint8>(LAYER_TYPE::LIGHT);
+	}
+	else if (gameObject->GetCamera()) {
+		layer = static_cast<uint8>(LAYER_TYPE::CAMERA);
+	}
+
 	_gameObjects[layer].push_back(gameObject);
 	_objects.push_back(gameObject);
 	gameObject->SetLayer(layer);

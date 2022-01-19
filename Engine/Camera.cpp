@@ -33,38 +33,62 @@ void Camera::FinalUpdate()
 		_matProjection = ::XMMatrixOrthographicLH(width * _scale, height * _scale, _near, _far);
 	}
 
-	S_MatView = _matView;
-	S_MatProjection = _matProjection;
-
 	_frustum.FinalUpdate();
 }
 
-void Camera::Render()
+void Camera::SortGameObject()
 {
 	shared_ptr<Scene> scene = GET_SINGLE(SceneManager)->GetCurrentScene();
+	const vector<shared_ptr<GameObject>>& gameObjects = scene->GetAllGameObjects();
 
-	// Auto를 하는 이유 : 명시하기에는 너무 강한 적
-	auto& sceneObjects = scene->GetGameObjects();
+	_vecForward.clear();
+	_vecDeferred.clear();
 
-	/* ----- 첫번째는 레이어를 순회를 한다, 두번째는 레이어안에 GameObject를 순회한다. ----- */
-	for (auto& layerObjects : sceneObjects) {
-		// 렌더링이 가능한 녀석을 골라서 렌더링한다.
-		for (auto& gameObject : layerObjects) {
-			if (gameObject->GetMeshRenderer() == nullptr) {
-				continue;
-			}
-			if (gameObject->GetActive() == false) {
-				continue;
-			}
-
-			if (gameObject->GetCheckFrustum() == true) {		// 컬링 대상인지 확인한다.
-				if (_frustum.ContainSphere(gameObject->GetTransform()->GetLocalPosition(),
-					/*Bound Vulme 넣어야함*/gameObject->GetTransform()->GetBoundingSphereRadius()) == false) {
-					continue;
-				}
-			}
-
-			gameObject->GetMeshRenderer()->Render();
+	for (const shared_ptr<GameObject>& go : gameObjects) {
+		if (go->GetMeshRenderer() == nullptr) {
+			continue;
 		}
+		if (IsCulled(go->GetLayer())) {
+			continue;
+		}
+
+		if (go->GetCheckFrustum()) {
+			if (_frustum.ContainSphere(
+				go->GetTransform()->GetWorldPosition(),
+				go->GetTransform()->GetBoundingSphereRadius()) == false) {
+				continue;
+			}
+		}
+
+		SHADER_TYPE shaderType = go->GetMeshRenderer()->GetMaterial()->GetShader()->GetShaderType();
+		switch(shaderType) {
+		case SHADER_TYPE::DEFERRED:
+			_vecDeferred.push_back(go);
+			break;
+		case SHADER_TYPE::FORWARD:
+			_vecForward.push_back(go);
+			break;
+		}
+	}
+
+}
+
+void Camera::Render_Deferred()
+{
+	S_MatView = _matView;
+	S_MatProjection = _matProjection;
+
+	for (const shared_ptr<GameObject>& go : _vecDeferred) {
+		go->GetMeshRenderer()->Render();
+	}
+}
+
+void Camera::Render_Forward()
+{
+	S_MatView = _matView;
+	S_MatProjection = _matProjection;
+
+	for (const shared_ptr<GameObject>& go : _vecForward) {
+		go->GetMeshRenderer()->Render();
 	}
 }

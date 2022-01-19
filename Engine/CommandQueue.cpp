@@ -2,6 +2,7 @@
 #include "CommandQueue.h"
 #include "SwapChain.h"
 #include "Engine.h"
+#include "RenderTargetGroup.h"
 
 CommandQueue::~CommandQueue()
 {
@@ -55,11 +56,13 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	_cmdList->Reset(_cmdAlloc.Get(), nullptr);
 
 	/* ----- Barrier를 만들어준다. ----- */
+	int8 backIndex = _swapChain->GetBackBufferIndex();
+
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		_swapChain->GetBackRTVBuffer().Get(),
+		GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->GetRTTexture(backIndex)->GetTex2D().Get(),
 		D3D12_RESOURCE_STATE_PRESENT,			// 화면 출력		Before State
 		D3D12_RESOURCE_STATE_RENDER_TARGET);	// 외주 결과물	After State
-
+	
 	/* ----- 사용할 영역을 정의해준다. ----- */
 	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
 
@@ -75,26 +78,15 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	/* ----- 그려질 리소스의 크기를 정의해준다. ----- */
 	_cmdList->RSSetViewports(1, vp);
 	_cmdList->RSSetScissorRects(1, rect);
-
-	/* ----- BackBuffer를 정의해준다. ----- */
-	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = _swapChain->GetBackRTV();
-	_cmdList->ClearRenderTargetView(backBufferView, Colors::Black, 0, nullptr);
-
-	/* ----- 깊이 버퍼의 정보를 기입해준다. ----- */
-	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = GEngine->GetDepthStencilBuffer()->GetDSVCpuHandle();
-	_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
-	_cmdList->ClearDepthStencilView(
-		depthStencilView, 
-		D3D12_CLEAR_FLAG_DEPTH /* | Stencil타입은 비트플래그로 추가가능*/, 
-		1.0f, 0, 0, nullptr
-	);
 }
 
 void CommandQueue::RenderEnd()
 {
 	/* ----- Barrier를 다시 생성해준다. ----- */
+	int8 backIndex = _swapChain->GetBackBufferIndex();
+
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		_swapChain->GetBackRTVBuffer().Get(),
+		GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->GetRTTexture(backIndex)->GetTex2D().Get(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET,		// 외주 결과물	Before
 		D3D12_RESOURCE_STATE_PRESENT			// 화면 출력			Atfer
 	);

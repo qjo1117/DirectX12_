@@ -18,13 +18,9 @@ StartScene::StartScene()
 
 		shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-		material->SetShader(shader);
+		material->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Forward"));
 
-		shared_ptr<Texture> texture = make_shared<Texture>();
-		texture->Init(L"..\\Resources\\Texture\\Picture.jpg");
-		material->SetTexture(0, texture);
+		material->SetTexture(0, GET_SINGLE(Resources)->Get<Texture>(L"Metal"));
 
 		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadSphereMesh();
 

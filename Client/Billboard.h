@@ -24,7 +24,7 @@ public:
 	void SetScene(shared_ptr<class Scene> scene) { _scene = scene; }
 
 private:
-	shared_ptr<class GameObject>	_camera;
-	shared_ptr<class Scene>		_scene;
+	weak_ptr<class GameObject>	_camera;
+	weak_ptr<class Scene>			_scene;
 };
 

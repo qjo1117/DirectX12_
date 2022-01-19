@@ -49,6 +49,7 @@ public:
 	/* ----- Helper Function ----- */
 	const string&	GetGUIName() { return _guiName; }
 	void			SetGUIName(const string& name) { _guiName = name; }
+	void			SetGUIName(const wstring& name) { const wchar_t* wName = name.data(); char strName[MAX_PATH]; ::memset(strName, 0, MAX_PATH); ::WideCharToMultiByte(CP_ACP, 0, wName, -1, strName, lstrlenW(wName), 0, 0); SetGUIName(strName); SetName(name); }
 
 	uint32			GetLayer() { return _layerType; }
 	void			SetLayer(uint32 type) { _layerType = type; }

@@ -59,6 +59,6 @@ private:
 
 	vector<function<void()>> _createList;
 
-	char						_text[50];
+	char					_text[50];
 };
 

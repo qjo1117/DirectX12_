@@ -16,6 +16,9 @@ public:
 	using KeyObjMap = std::map<wstring, shared_ptr<Object>>;
 
 public:
+	void Init();
+
+
 	// TODO 각 Load, Save함수를 구현해야함.
 	template<typename T>
 	shared_ptr<T> Load(const wstring& key, const wstring& path);
@@ -35,9 +38,16 @@ public:
 
 	shared_ptr<Mesh> LoadCubeMesh();
 	shared_ptr<Mesh> LoadSphereMesh();
-	shared_ptr<Mesh> LoadQuadMesh();
+	shared_ptr<Mesh> LoadRectangleMesh();
+
+	shared_ptr<Texture> CreateTexture(const wstring& name, DXGI_FORMAT format, uint32 width, uint32 height, const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE, Vec4 clearColor = Vec4());
+
+	shared_ptr<Texture> CreateTextureFromResource(const wstring& name, ComPtr<ID3D12Resource> tex2D);
 
 	KeyObjMap& GetResources(OBJECT_TYPE type) { return _resources[static_cast<uint32>(type)]; }
+private:
+	void CreateDefaultShader();
+	void CreateDefaultMaterial();
 
 private:
 

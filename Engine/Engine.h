@@ -6,7 +6,7 @@
 #include "RootSignature.h"
 #include "ConstantBuffer.h"
 #include "TableDescriptorHeap.h"
-#include "DepthStencilBuffer.h"
+#include "RenderTargetGroup.h"
 
 #include "Texture.h"
 #include "Mesh.h"
@@ -40,9 +40,9 @@ public:
 	shared_ptr<SwapChain>			GetSwapChain() { return _swapChain; }
 	shared_ptr<RootSignature>		GetRootSignature() { return _rootSignature; }
 	shared_ptr<TableDescriptorHeap> GetTableDescHeap() { return _tableDescHeap; }
-	shared_ptr<DepthStencilBuffer>	GetDepthStencilBuffer() { return _depthStencilBuffer; }
 	shared_ptr<EngineGUI>			GetGUI() { return _engineGUI; }
 	shared_ptr<ConstantBuffer>		GetConstantBuffer(CONSTANT_BUFFER_TYPE type) { return _constantBuffers[static_cast<uint8>(type)]; }
+	shared_ptr<RenderTargetGroup>	GetRTGroup(RENDER_TARGET_GROUP_TYPE type) { return _rtGroups[static_cast<uint8>(type)]; }
 
 
 	const WindowInfo& GetWindow() { return _winInfo; }
@@ -53,6 +53,7 @@ private:
 
 private:
 	void CreateConstantBuffer(CBV_REGISTER reg, uint32 bufferSize, uint32 count);
+	void CreateRenderTargetGroups();
 
 private:
 	/* ----- View Variable ----- */
@@ -62,15 +63,15 @@ private:
 	D3D12_RECT		_scissorRect = {};
 
 	/* ----- Graphics Variable ----- */
-	shared_ptr<Device>						_device;
-	shared_ptr<CommandQueue>				_cmdQueue;
-	shared_ptr<SwapChain>					_swapChain;
-	shared_ptr<RootSignature>				_rootSignature;
-	shared_ptr<TableDescriptorHeap>			_tableDescHeap;
-	shared_ptr<DepthStencilBuffer>			_depthStencilBuffer;
+	shared_ptr<Device>												_device;
+	shared_ptr<CommandQueue>										_cmdQueue;
+	shared_ptr<SwapChain>											_swapChain;
+	shared_ptr<RootSignature>										_rootSignature;
+	shared_ptr<TableDescriptorHeap>									_tableDescHeap;
 
-	vector<shared_ptr<ConstantBuffer>>		_constantBuffers;
+	array<shared_ptr<RenderTargetGroup>, RENDER_TARGET_GROUP_COUNT>	_rtGroups;
+	vector<shared_ptr<ConstantBuffer>>								_constantBuffers;
 
-	shared_ptr<EngineGUI>					_engineGUI;
+	shared_ptr<EngineGUI>											_engineGUI;
 };
 

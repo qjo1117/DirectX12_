@@ -18,7 +18,17 @@ GameObject::GameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 
 GameObject::~GameObject()
 {
-
+	for (shared_ptr<Component>& component : _components) {
+		if (component) {
+			component = nullptr;
+		}
+	}
+	for (auto& script : _scripts) {
+		if (script.second) {
+			script.second = nullptr;
+		}
+	}
+	_scripts.clear();
 }
 
 void GameObject::Init()

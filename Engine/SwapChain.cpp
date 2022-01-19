@@ -5,7 +5,6 @@
 void SwapChain::Init(const WindowInfo& info, ComPtr<ID3D12Device> device, ComPtr<IDXGIFactory> dxgi, ComPtr<ID3D12CommandQueue> cmdQueue)
 {
 	CreateSwapChain(info, dxgi, cmdQueue);
-	CreateRTV(device);
 }
 
 void SwapChain::Present()
@@ -43,29 +42,4 @@ void SwapChain::CreateSwapChain(const WindowInfo& info, ComPtr<IDXGIFactory> dxg
 
 	dxgi->CreateSwapChain(cmdQueue.Get(), &sd, &_swapChain);
 
-	/* ----- 정의한 버퍼만큼 크기를 만들어준다. ----- */
-	for (int32 i = 0; i < SWAP_CHAIN_BUFFER_COUNT; i++)
-		_swapChain->GetBuffer(i, IID_PPV_ARGS(&_rtvBuffer[i]));
-}
-
-void SwapChain::CreateRTV(ComPtr<ID3D12Device> device)
-{
-	/* ----- Resource Target View(RTV) Create / 2D로 보여주는 자원은 RTV로 만들어진다. ----- */
-	int32 rtvHeapSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDesc;
-	rtvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvDesc.NumDescriptors = SWAP_CHAIN_BUFFER_COUNT;
-	rtvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	rtvDesc.NodeMask = 0;
-
-	/* ----- DescriptorHeap에 정의하고 사용하겠다고 알려주는 작업 ----- */
-	device->CreateDescriptorHeap(&rtvDesc, IID_PPV_ARGS(&_rtvHeap));
-
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
-
-	for (int i = 0; i < SWAP_CHAIN_BUFFER_COUNT; i++) {
-		_rtvHandle[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvHeapBegin, i * rtvHeapSize);
-		device->CreateRenderTargetView(_rtvBuffer[i].Get(), nullptr, _rtvHandle[i]);
-	}
 }

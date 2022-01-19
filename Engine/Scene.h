@@ -21,6 +21,8 @@ public:
 	virtual void FinalUpdate();
 
 	void Render();
+	void RenderLights();
+	void RenderFinal();
 
 private:
 	void PushLightData();

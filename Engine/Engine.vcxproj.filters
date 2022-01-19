@@ -25,14 +25,14 @@
     <Filter Include="Object\Resource">
       <UniqueIdentifier>{c5612518-9c4d-408d-926a-9312743d39fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Shape">
+      <UniqueIdentifier>{0be7c49e-ab01-4892-8a3b-8cb53c461af9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Utils\Engine">
       <UniqueIdentifier>{356ddcd0-b91d-484c-878a-0548cc89c6e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\UserUtils">
+    <Filter Include="Utils\User">
       <UniqueIdentifier>{5689acdf-bd7f-4f6d-b633-661270d250d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Shape">
-      <UniqueIdentifier>{0be7c49e-ab01-4892-8a3b-8cb53c461af9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -65,9 +65,6 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Object\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthStencilBuffer.cpp">
-      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Core</Filter>
@@ -151,19 +148,25 @@
       <Filter>Utils\Engine</Filter>
     </ClCompile>
     <ClCompile Include="PMath.cpp">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClCompile>
     <ClCompile Include="SimpleMath.cpp">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClCompile>
     <ClCompile Include="Utils.cpp">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClCompile>
     <ClCompile Include="Random.cpp">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Object\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="PathManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTargetGroup.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,9 +199,6 @@
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencilBuffer.h">
-      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Core</Filter>
@@ -291,45 +291,59 @@
       <Filter>Utils\Engine</Filter>
     </ClInclude>
     <ClInclude Include="PMath.h">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClInclude>
     <ClInclude Include="SimpleMath.h">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClInclude>
     <ClInclude Include="Random.h">
-      <Filter>Utils\UserUtils</Filter>
+      <Filter>Utils\User</Filter>
     </ClInclude>
     <ClInclude Include="Frustum.h">
       <Filter>Object\Shape</Filter>
     </ClInclude>
+    <ClInclude Include="PathManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTargetGroup.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\Shader\default.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="..\Resources\Shader\params.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="..\Resources\Shader\utils.hlsli">
-      <Filter>Shader</Filter>
+    <None Include="SimpleMath.inl">
+      <Filter>Utils\User</Filter>
     </None>
     <None Include="layer.def">
-      <Filter>Utils\Engine</Filter>
+      <Filter>Core</Filter>
     </None>
-    <None Include="SimpleMath.inl">
-      <Filter>Utils\UserUtils</Filter>
-    </None>
-    <None Include="..\Resources\Shader\SimpleTexture.hlsli">
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\skybox.fx">
       <Filter>Shader</Filter>
-    </None>
-    <None Include="..\Resources\Shader\skybox.hlsli">
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\utils.fx">
       <Filter>Shader</Filter>
-    </None>
-    <None Include="..\Resources\Shader\wirefram.hlsli">
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\wirefram.fx">
       <Filter>Shader</Filter>
-    </None>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\forward.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\params.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\SimpleTexture.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\deferred.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\lighting.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

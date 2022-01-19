@@ -1,7 +1,9 @@
 
+// Engine
 X(UI)
 X(CAMERA)
 X(SKYBOX)
+X(LIGHT)
 
 // TODO
 

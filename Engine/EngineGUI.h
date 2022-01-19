@@ -15,6 +15,8 @@ public:
 	void Render();
 	void End();
 
+	void ResizeWindow();
+
 public:
 	/* ----- Helper Function ----- */
 	void AddFunction(function<void()> func);
@@ -24,6 +26,8 @@ public:
 private:
 	/* ----- Draw Variable ----- */
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
+
+	shared_ptr<class Texture> _guiTex;
 
 	/* ----- GUI Variable ----- */
 	vector<function<void()>> _renderFuncs;
