@@ -12,12 +12,14 @@ void Engine::Init(const WindowInfo& info)
 	// 메모리가 정상적으로 해제가 안되니 꼭꼭꼭 Window를 종료시키자.
 #pragma region DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc();
+	//_CrtSetBreakAlloc(245);
 	// 메모리 Leak이 있을때만 사용하면 됨
 
 #ifdef _DEBUG
 	AllocConsole();
 #endif 
+
+
 #pragma endregion
 
 	/* ----- 정보 저장 ----- */
@@ -31,18 +33,22 @@ void Engine::Init(const WindowInfo& info)
 #pragma region MakeShaded
 
 	_device = make_shared<Device>();
-	_cmdQueue = make_shared<CommandQueue>();
+	_graphicsCmdQueue = make_shared<GraphicsCommandQueue>();
+	_computeCmdQueue = make_shared<ComputeCommandQueue>();
 	_swapChain = make_shared<SwapChain>();
 	_rootSignature = make_shared<RootSignature>();
-	_tableDescHeap = make_shared<TableDescriptorHeap>();
+	_graphicsDescHeap = make_shared<GraphicsDescriptorHeap>();
+	_computeDescHeap = make_shared<ComputeDescriptorHeap>();
 	_engineGUI = make_shared<EngineGUI>();
 #pragma endregion
 
 	_device->Init();
-	_cmdQueue->Init(_device->GetDevice(), _swapChain);
-	_swapChain->Init(info, _device->GetDevice(), _device->GetDXGI(), _cmdQueue->GetCmdQueue());
+	_graphicsCmdQueue->Init(_device->GetDevice(), _swapChain);
+	_computeCmdQueue->Init(_device->GetDevice());
+	_swapChain->Init(info, _device->GetDevice(), _device->GetDXGI(), _graphicsCmdQueue->GetGraphicsCmdQueue());
 	_rootSignature->Init();
-	_tableDescHeap->Init(256);
+	_graphicsDescHeap->Init(256);
+	_computeDescHeap->Init();
 	_engineGUI->Init();
 
 	CreateRenderTargetGroups();
@@ -83,7 +89,6 @@ void Engine::Update()
 	GET_SINGLE(Timer)->Update();
 	GET_SINGLE(SceneManager)->Update();
 
-
 	Render();
 }
 
@@ -100,12 +105,13 @@ void Engine::End()
 
 void Engine::RenderBegin()
 {
-	_cmdQueue->RenderBegin(&_viewport, &_scissorRect);
+	_graphicsCmdQueue->RenderBegin(&_viewport, &_scissorRect);
 }
 
 void Engine::RenderEnd()
 {
-	_cmdQueue->RenderEnd();
+
+	_graphicsCmdQueue->RenderEnd();
 }
 
 void Engine::ResizeWindow(int32 width, int32 height)

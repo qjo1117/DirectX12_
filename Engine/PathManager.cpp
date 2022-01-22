@@ -19,7 +19,7 @@ void PathManager::Init()
 
 	_paths.insert(make_pair<string, wstring>(BASE_PATH, strPath));
 
-	assert(CreatePath(TEXTRUE_PATH, L"Texture\\"));
+	assert(CreatePath(TEXTURE_PATH, L"Texture\\"));
 	assert(CreatePath(SHADER_PATH, L"Shader\\"));
 
 }

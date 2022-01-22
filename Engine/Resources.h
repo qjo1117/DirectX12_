@@ -39,6 +39,10 @@ public:
 	shared_ptr<Mesh> LoadCubeMesh();
 	shared_ptr<Mesh> LoadSphereMesh();
 	shared_ptr<Mesh> LoadRectangleMesh();
+	shared_ptr<Mesh> LoadCircleMesh();
+	shared_ptr<Mesh> LoadCylinderMesh();
+	shared_ptr<Mesh> LoadConeMesh();
+	shared_ptr<Mesh> LoadPointMesh();
 
 	shared_ptr<Texture> CreateTexture(const wstring& name, DXGI_FORMAT format, uint32 width, uint32 height, const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE, Vec4 clearColor = Vec4());
 
@@ -48,6 +52,7 @@ public:
 private:
 	void CreateDefaultShader();
 	void CreateDefaultMaterial();
+	void CreateDefaultGameObject();
 
 private:
 
@@ -68,6 +73,7 @@ inline shared_ptr<T> Resources::Load(const wstring& key, const wstring& path)
 	shared_ptr<T> object = make_shared<T>();
 	object->Load(path);
 	keyObjMap[key] = object;
+	object->SetName(key);
 
 	return object;
 }
@@ -83,6 +89,7 @@ bool Resources::Add(const wstring& key, shared_ptr<T> object)
 		return false;
 
 	keyObjMap[key] = object;
+	object->SetName(key);
 
 	return true;
 }

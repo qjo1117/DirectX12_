@@ -10,16 +10,20 @@ public:
 	void Init();
 
 	/* ----- Helper Function ----- */
-	ComPtr<ID3D12RootSignature>	GetSignature() { return _signature; }
+	ComPtr<ID3D12RootSignature>	GetGraphicsSignature() { return _graphicsRootSignature; }
+	ComPtr<ID3D12RootSignature>	GetComputeSignature() { return _computeRootSignature; }
 
 private:
 	/* ----- Create Function ----- */
-	void CreateSamplerDesc();
-	void CreateRootSignature();
+	void CreateGraphicsRootSignature();
+	void CreateComputeRootSignature();
 
 private:
-	/* ----- RootSignature Variable ----- */
-	ComPtr<ID3D12RootSignature>		_signature;
+	/* ----- GraphicsRootSignature Variable ----- */
+	ComPtr<ID3D12RootSignature>		_graphicsRootSignature;
 	D3D12_STATIC_SAMPLER_DESC		_samplerDesc;	// Sampler Á¤Ã¥
+
+	/* ----- ComputeRootSignature Variable ----- */
+	ComPtr<ID3D12RootSignature>		_computeRootSignature;
 };
 

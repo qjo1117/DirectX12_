@@ -19,8 +19,8 @@ public:
 	void SetMesh(shared_ptr<Mesh> mesh) { _mesh = mesh; }
 	void SetMaterial(shared_ptr<Material> material) { _material = material; }
 
-	// TODO : ¿Â≥≠
 	shared_ptr<Material> GetMaterial() { return _material; }
+	shared_ptr<Mesh> GetMesh() { return _mesh; }
 
 	/* ----- virtual Function ----- */
 	void Render();

@@ -25,7 +25,7 @@ void Light::Render()
 	GetTransform()->PushData();
 
 	_lightMaterial->SetInt(0, _lightIndex);		// Shadar에서 넘겨주는 거 생각하면 됨
-	_lightMaterial->PushData();
+	_lightMaterial->PushGraphicsData();
 
 	switch (static_cast<LIGHT_TYPE>(_lightInfo.lightType)) {
 	case LIGHT_TYPE::POINT_LIGHT:
@@ -52,7 +52,7 @@ void Light::SetLightType(LIGHT_TYPE type)
 		_lightMaterial = GET_SINGLE(Resources)->Get<Material>(L"PointLight");
 		break;
 	case LIGHT_TYPE::SPOT_LIGHT:
-		_volumeMesh = GET_SINGLE(Resources)->LoadSphereMesh();
+		_volumeMesh = GET_SINGLE(Resources)->LoadConeMesh();
 		_lightMaterial = GET_SINGLE(Resources)->Get<Material>(L"PointLight");
 		break;
 	}

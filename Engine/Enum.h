@@ -20,6 +20,22 @@ enum class SRV_REGISTER : uint8
 	t2,
 	t3,
 	t4,
+	t5,
+	t6,
+	t7,
+	t8,
+	t9,
+
+	END
+};
+
+enum class UAV_REGISTER : uint8
+{
+	u0 = static_cast<uint8>(SRV_REGISTER::END),
+	u1,
+	u2,
+	u3,
+	u4,
 
 	END
 };
@@ -29,7 +45,9 @@ enum
 	SWAP_CHAIN_BUFFER_COUNT = 2,
 	CBV_REGISTER_COUNT = static_cast<uint8>(CBV_REGISTER::END),
 	SRV_REGISTER_COUNT = static_cast<uint8>(SRV_REGISTER::END) - static_cast<uint8>(CBV_REGISTER_COUNT),
-	REGISTER_COUNT = static_cast<uint8>(CBV_REGISTER_COUNT) + static_cast<uint8>(SRV_REGISTER_COUNT),
+	CBV_SRV_REGISTER_COUNT = static_cast<uint8>(CBV_REGISTER_COUNT) + static_cast<uint8>(SRV_REGISTER_COUNT),
+	UAV_REGISTER_COUNT = static_cast<uint8>(UAV_REGISTER::END),
+	TOTAL_REGISTER_COUNT = static_cast<uint8>(CBV_SRV_REGISTER_COUNT) + static_cast<uint8>(UAV_REGISTER_COUNT),
 };
 
 /* --------------------------- KEY --------------------------- */
@@ -95,6 +113,7 @@ enum class COMPONENT_TYPE : uint8
 	MESH_RENDERER,
 	CAMERA,
 	LIGHT,
+	PARTICLE_SYSTEM,
 	// ...
 	MONO_BEHAVIOUR,
 	END,

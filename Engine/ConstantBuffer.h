@@ -27,9 +27,10 @@ public:
 	void Init(CBV_REGISTER reg, uint32 size, uint32 count);
 
 	void Clear();
-	void PushData(void* buffer, uint32 size);
+	void PushGraphicsData(void* buffer, uint32 size);
+	void PushComputeData(void* buffer, uint32 size);
 
-	void SetGlobalData(void* buffer, uint32 size);
+	void SetGraphicsGlobalData(void* buffer, uint32 size);
 
 	/* ----- Helper Function ----- */
 	D3D12_GPU_VIRTUAL_ADDRESS	GetGpuVirtualAddress(uint32 index);

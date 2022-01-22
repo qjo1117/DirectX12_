@@ -1,0 +1,6 @@
+﻿  EngineGUI.cpp
+D:\Cpp\DirectX12\11_ParticleSystem\Engine\EngineGUI.cpp(31,47): warning C4244: '=': 'const int32'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\Cpp\DirectX12\11_ParticleSystem\Engine\EngineGUI.cpp(32,47): warning C4244: '=': 'const int32'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\Cpp\DirectX12\11_ParticleSystem\Engine\EngineGUI.cpp(70,47): warning C4244: '=': 'const int32'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\Cpp\DirectX12\11_ParticleSystem\Engine\EngineGUI.cpp(71,47): warning C4244: '=': 'const int32'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Engine.vcxproj -> D:\Cpp\DirectX12\11_ParticleSystem\Output\Engine.lib

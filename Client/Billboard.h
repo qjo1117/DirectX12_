@@ -2,6 +2,8 @@
 
 #include "Monobehaviour.h"
 
+
+
 class Billboard : public MonoBehaviour
 {
 public:
@@ -24,7 +26,9 @@ public:
 	void SetScene(shared_ptr<class Scene> scene) { _scene = scene; }
 
 private:
-	weak_ptr<class GameObject>	_camera;
-	weak_ptr<class Scene>			_scene;
+	shared_ptr<class GameObject>	_camera;
+	shared_ptr<class Scene>			_scene;
+
+	PUBLIC_PROPERTY(int32, Hp);		// 김치삼 교수님이 알려주신방법
 };
 

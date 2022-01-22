@@ -9,6 +9,7 @@ class MeshRenderer;
 class MonoBehaviour;
 class Camera;
 class Light;
+class ParticleSystem;
 
 /*---------------
 	GameObject
@@ -36,6 +37,7 @@ public:
 	shared_ptr<MeshRenderer> GetMeshRenderer();
 	shared_ptr<Camera> GetCamera();
 	shared_ptr<Light> GetLight();
+	shared_ptr<ParticleSystem> GetParticleSystem();
 
 	map<string, shared_ptr<MonoBehaviour>>& GetScripts() { return _scripts; }
 
@@ -53,6 +55,7 @@ public:
 
 	uint32			GetLayer() { return _layerType; }
 	void			SetLayer(uint32 type) { _layerType = type; }
+	void			SetLayer(LAYER_TYPE type) { SetLayer(static_cast<uint32>(type)); }
 
 	bool			GetCheckFrustum() { return _isFrustum; }
 	void			SetCheckFrustum(bool check) { _isFrustum = check; }
@@ -60,7 +63,7 @@ public:
 	bool			GetActive() { return _isActive; }
 	void			SetActive(bool active) { _isActive = active; }
 private:
-	uint32 _layerType = 0;
+	uint32 _layerType = static_cast<uint32>(LAYER_TYPE::DEFAULT);
 
 	/* ----- Component Variable ----- */
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> _components;

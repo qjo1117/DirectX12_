@@ -122,7 +122,7 @@ void Scene::Render()
 
 	RenderFinal();
 
-	//mainCamera->Render_Forward();
+	mainCamera->Render_Forward();
 
 	// UI, Forward를 그려준다.
 	for (const auto& camera : _gameObjects[static_cast<uint8>(LAYER_TYPE::CAMERA)]) {
@@ -157,7 +157,7 @@ void Scene::RenderFinal()
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->OMSetRenderTargets(1, backIndex);
 
 	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Final");
-	material->PushData();
+	material->PushGraphicsData();
 	GET_SINGLE(Resources)->Get<Mesh>(L"Rectangle")->Render();
 }
 
@@ -169,6 +169,9 @@ void Scene::PushLightData()
 		if (light->GetLight() == nullptr) {
 			continue;
 		}
+		if (light->GetActive() == false) {
+			continue;
+		}
 
 		const LightInfo& lightInfo = light->GetLight()->GetLightInfo();
 
@@ -178,7 +181,7 @@ void Scene::PushLightData()
 		lightParams.lightCount += 1;
 	}
 
-	CONST_BUFFER(CONSTANT_BUFFER_TYPE::GLOBAL)->SetGlobalData(&lightParams, sizeof(lightParams));
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::GLOBAL)->SetGraphicsGlobalData(&lightParams, sizeof(lightParams));
 }
 
 void Scene::AddGameObject(shared_ptr<GameObject> gameObject, uint32 layer)
@@ -191,6 +194,11 @@ void Scene::AddGameObject(shared_ptr<GameObject> gameObject, uint32 layer)
 	}
 	else if (gameObject->GetCamera()) {
 		layer = static_cast<uint8>(LAYER_TYPE::CAMERA);
+	}
+
+	// 만약 사용자가 따로 레이어를 설정한 경우에는 그에 맞게 넣어준다.
+	if (gameObject->GetLayer() != static_cast<uint8>(LAYER_TYPE::DEFAULT)) {
+		layer = gameObject->GetLayer();
 	}
 
 	_gameObjects[layer].push_back(gameObject);

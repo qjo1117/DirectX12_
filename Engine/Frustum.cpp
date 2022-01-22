@@ -10,14 +10,14 @@ void Frustum::FinalUpdate()
 
 	vector<Vec3> worldPos =
 	{
-		::XMVector3TransformCoord(Vec3(-1.0f,+1.0f,0.0f), matInv),
-		::XMVector3TransformCoord(Vec3(+1.0f,+1.0f,0.0f), matInv),
-		::XMVector3TransformCoord(Vec3(+1.0f,-1.0f,0.0f), matInv),
-		::XMVector3TransformCoord(Vec3(-1.0f,-1.0f,0.0f), matInv),
-		::XMVector3TransformCoord(Vec3(-1.0f,+1.0f,1.0f), matInv),
-		::XMVector3TransformCoord(Vec3(+1.0f,+1.0f,1.0f), matInv),
-		::XMVector3TransformCoord(Vec3(+1.0f,-1.0f,1.0f), matInv),
-		::XMVector3TransformCoord(Vec3(-1.0f,-1.0f,1.0f), matInv),
+		::XMVector3TransformCoord(Vec3(-1.0f, +1.0f, 0.0f), matInv),
+		::XMVector3TransformCoord(Vec3(+1.0f, +1.0f, 0.0f), matInv),
+		::XMVector3TransformCoord(Vec3(+1.0f, -1.0f, 0.0f), matInv),
+		::XMVector3TransformCoord(Vec3(-1.0f, -1.0f, 0.0f), matInv),
+		::XMVector3TransformCoord(Vec3(-1.0f, +1.0f, 1.0f), matInv),
+		::XMVector3TransformCoord(Vec3(+1.0f, +1.0f, 1.0f), matInv),
+		::XMVector3TransformCoord(Vec3(+1.0f, -1.0f, 1.0f), matInv),
+		::XMVector3TransformCoord(Vec3(-1.0f, -1.0f, 1.0f), matInv),
 	};
 
 	_planes[PLANE_FRONT] = ::XMPlaneFromPoints(worldPos[0], worldPos[1], worldPos[2]);

@@ -11,7 +11,7 @@ Shader::~Shader()
 {
 }
 
-void Shader::Init(const wstring& path, ShaderInfo info, const string& vs, const string& ps)
+void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const string& vs, const string& ps, const string& gs)
 {
 	_info = info;
 
@@ -19,6 +19,9 @@ void Shader::Init(const wstring& path, ShaderInfo info, const string& vs, const 
 
 	CreateVertexShader(basePath, vs, "vs_5_0");
 	CreatePixelShader(basePath, ps, "ps_5_0");
+	if (gs.empty() == false) {
+		CreateGeometryShader(basePath, gs, "gs_5_0");
+	}
 
 	/* ----- 어떤 형식으로 만들것인지 의미소를 부여해서 맵핑할 수 있도록 해준다. ----- */
 	D3D12_INPUT_ELEMENT_DESC desc[] =
@@ -30,19 +33,19 @@ void Shader::Init(const wstring& path, ShaderInfo info, const string& vs, const 
 	};
 
 	/* ----- 어떤 형식, 어떤 자원을 쓸것인지 정보를 전달한다. ----- */
-	_pipelineDesc.InputLayout = { desc, _countof(desc) };
-	_pipelineDesc.pRootSignature = ROOT_SIGNATURE.Get();
+	_graphicsPipelineDesc.InputLayout = { desc, _countof(desc) };
+	_graphicsPipelineDesc.pRootSignature = GRAPHICS_ROOT_SIGNATURE.Get();
 
 	/* ----- 어떤 방식으로 Pipeline을 쓸것인지 서술해준다. ----- */
-	_pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	_pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	_pipelineDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);;
-	_pipelineDesc.SampleMask = UINT_MAX;
-	_pipelineDesc.PrimitiveTopologyType = _info.topologyType;
-	_pipelineDesc.NumRenderTargets = 1;
-	_pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	_pipelineDesc.SampleDesc.Count = 1;
-	_pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	_graphicsPipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	_graphicsPipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	_graphicsPipelineDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);;
+	_graphicsPipelineDesc.SampleMask = UINT_MAX;
+	_graphicsPipelineDesc.PrimitiveTopologyType = GetTopologyType(_info.topology);
+	_graphicsPipelineDesc.NumRenderTargets = 1;
+	_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	_graphicsPipelineDesc.SampleDesc.Count = 1;
+	_graphicsPipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	/* ----- ShaderInfo -> PipelineDesc ------ */
 	SetShaderInfo();
@@ -50,12 +53,31 @@ void Shader::Init(const wstring& path, ShaderInfo info, const string& vs, const 
 	SetDepthStencilInfo();
 	SetBlendInfo();
 
-	DEVICE->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState));
+	DEVICE->CreateGraphicsPipelineState(&_graphicsPipelineDesc, IID_PPV_ARGS(&_pipelineState));
+}
+
+void Shader::CreateComputeShader(const wstring& path, const string& name, const string& version)
+{
+	_info.shaderType = SHADER_TYPE::COMPUTE;
+
+	wstring basePath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH) + path;
+
+	CreateShader(basePath, name, version, _csBlob, _computePipelineDesc.CS);
+	_computePipelineDesc.pRootSignature = COMPUTE_ROOT_SIGNATURE.Get();
+
+	HRESULT hr = DEVICE->CreateComputePipelineState(&_computePipelineDesc, IID_PPV_ARGS(&_pipelineState));
+	assert(SUCCEEDED(hr));
 }
 
 void Shader::Update()
 {
-	CMD_LIST->SetPipelineState(_pipelineState.Get());
+	if (GetShaderType() == SHADER_TYPE::COMPUTE) {
+		COMPUTE_CMD_LIST->SetPipelineState(_pipelineState.Get());
+	}
+	else {
+		GRAPHICS_CMD_LIST->IASetPrimitiveTopology(_info.topology);
+		GRAPHICS_CMD_LIST->SetPipelineState(_pipelineState.Get());
+	}
 }
 
 void Shader::CreateShader(const wstring& path, const string& name, const string& version, ComPtr<ID3DBlob>& blob, D3D12_SHADER_BYTECODE& shaderByteCode)
@@ -77,32 +99,41 @@ void Shader::CreateShader(const wstring& path, const string& name, const string&
 
 void Shader::CreateVertexShader(const wstring& path, const string& name, const string& version)
 {
-	CreateShader(path, name, version, _vsBlob, _pipelineDesc.VS);
+	CreateShader(path, name, version, _vsBlob, _graphicsPipelineDesc.VS);
 }
 
 void Shader::CreatePixelShader(const wstring& path, const string& name, const string& version)
 {
-	CreateShader(path, name, version, _psBlob, _pipelineDesc.PS);
+	CreateShader(path, name, version, _psBlob, _graphicsPipelineDesc.PS);
+}
+
+void Shader::CreateGeometryShader(const wstring& path, const string& name, const string& version)
+{
+	CreateShader(path, name, version, _gsBlob, _graphicsPipelineDesc.GS);
 }
 
 void Shader::SetShaderInfo()
 {
 	switch (_info.shaderType) {
 	case SHADER_TYPE::FORWARD:
-		_pipelineDesc.NumRenderTargets = 1;
-		_pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		_graphicsPipelineDesc.NumRenderTargets = 1;
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
 
 	case SHADER_TYPE::DEFERRED:
-		_pipelineDesc.NumRenderTargets = RENDER_TARGET_G_BUFFER_GROUP_MEMBER_COUNT;
-		_pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;	// Position
-		_pipelineDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;	// Normal
-		_pipelineDesc.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM;		// Color
+		_graphicsPipelineDesc.NumRenderTargets = RENDER_TARGET_G_BUFFER_GROUP_MEMBER_COUNT;
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;	// Position
+		_graphicsPipelineDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;	// Normal
+		_graphicsPipelineDesc.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM;		// Color
 		break;
 	case SHADER_TYPE::LIGHTING:
-		_pipelineDesc.NumRenderTargets = 2;
-		_pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		_pipelineDesc.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		_graphicsPipelineDesc.NumRenderTargets = 2;
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		_graphicsPipelineDesc.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+	case SHADER_TYPE::PARTICLE:
+		_graphicsPipelineDesc.NumRenderTargets = 1;
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
 	}
 }
@@ -111,20 +142,20 @@ void Shader::SetRasterizeInfo()
 {
 	switch (_info.rasterizerType) {
 	case RASTERIZER_TYPE::CULL_NONE:
-		_pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		_pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		break;
 	case RASTERIZER_TYPE::CULL_FRONT:
-		_pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		_pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
 		break;
 	case RASTERIZER_TYPE::CULL_BACK:
-		_pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		_pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 		break;
 	case RASTERIZER_TYPE::WIREFRAME:
-		_pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-		_pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		break;
 	}
 }
@@ -133,40 +164,40 @@ void Shader::SetDepthStencilInfo()
 {
 	switch (_info.depthStencilType) {
 	case DEPTH_STENCIL_TYPE::LESS:
-		_pipelineDesc.DepthStencilState.DepthEnable = true;
-		_pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		_graphicsPipelineDesc.DepthStencilState.DepthEnable = true;
+		_graphicsPipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 		break;
 	case DEPTH_STENCIL_TYPE::LESS_EQUAL:
-		_pipelineDesc.DepthStencilState.DepthEnable = true;
-		_pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		_graphicsPipelineDesc.DepthStencilState.DepthEnable = true;
+		_graphicsPipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 		break;
 	case DEPTH_STENCIL_TYPE::GREATER:
-		_pipelineDesc.DepthStencilState.DepthEnable = true;
-		_pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER;
+		_graphicsPipelineDesc.DepthStencilState.DepthEnable = true;
+		_graphicsPipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER;
 		break;
 	case DEPTH_STENCIL_TYPE::GREATER_EQUAL:
-		_pipelineDesc.DepthStencilState.DepthEnable = true;
-		_pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+		_graphicsPipelineDesc.DepthStencilState.DepthEnable = true;
+		_graphicsPipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL;
 		break;
 	case DEPTH_STENCIL_TYPE::NO_DEPTH_TEST:
-		_pipelineDesc.DepthStencilState.DepthEnable = false;
-		_pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		_graphicsPipelineDesc.DepthStencilState.DepthEnable = false;
+		_graphicsPipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 		break;
 	case DEPTH_STENCIL_TYPE::NO_DEPTH_TEST_NO_WRITE:
-		_pipelineDesc.DepthStencilState.DepthEnable = false;
-		_pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		_graphicsPipelineDesc.DepthStencilState.DepthEnable = false;
+		_graphicsPipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		break;
 	case DEPTH_STENCIL_TYPE::LESS_NO_WRITE:
-		_pipelineDesc.DepthStencilState.DepthEnable = true;
-		_pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-		_pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		_graphicsPipelineDesc.DepthStencilState.DepthEnable = true;
+		_graphicsPipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		_graphicsPipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		break;
 	}
 }
 
 void Shader::SetBlendInfo()
 {
-	D3D12_RENDER_TARGET_BLEND_DESC& rt = _pipelineDesc.BlendState.RenderTarget[0];
+	D3D12_RENDER_TARGET_BLEND_DESC& rt = _graphicsPipelineDesc.BlendState.RenderTarget[0];
 
 	// SrcBlend = Pixel Shader
 	// DestBlend = Render Target
@@ -189,5 +220,61 @@ void Shader::SetBlendInfo()
 		rt.SrcBlend = D3D12_BLEND_ONE;
 		rt.DestBlend = D3D12_BLEND_ONE;
 		break;
+	}
+}
+
+
+
+D3D12_PRIMITIVE_TOPOLOGY_TYPE Shader::GetTopologyType(D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	switch (topology)
+	{
+	case D3D_PRIMITIVE_TOPOLOGY_POINTLIST:
+		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+	case D3D_PRIMITIVE_TOPOLOGY_LINELIST:
+	case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP:
+	case D3D_PRIMITIVE_TOPOLOGY_LINELIST_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ:
+		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP:
+		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	case D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_2_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_5_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_6_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_7_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_8_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_9_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_10_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_11_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_13_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_14_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_15_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_17_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_18_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_19_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_20_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_21_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_22_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_23_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_24_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_25_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_26_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_27_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_28_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_29_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_30_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_31_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_32_CONTROL_POINT_PATCHLIST:
+		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+	default:
+		return D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
 	}
 }

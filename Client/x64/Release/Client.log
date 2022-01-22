@@ -1,0 +1,116 @@
+﻿  pch.cpp
+D:\Cpp\DirectX12\10_MultipleRenderTarget\Engine\PMath.h(14,12): warning C4244: 'return': 'float'에서 'int32'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\Cpp\DirectX12\10_MultipleRenderTarget\Engine\PMath.h(31,12): warning C4244: 'return': 'const int32'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Billboard.cpp
+  CameraController.cpp
+  Client.cpp
+  Game.cpp
+  PlayerController.cpp
+  RotationXComponent.cpp
+  StartScene.cpp
+  ToolScene.cpp
+Engine.lib(MonoBehaviour.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(MonoBehaviour.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(MonoBehaviour.obj) : warning LNK4075: '/EDITANDCONTINUE'이(가) '/OPT:ICF' 사양으로 인해 무시됩니다.
+Engine.lib(GameObject.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(GameObject.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Component.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Component.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Engine.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Engine.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(EnginePch.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(EnginePch.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(SceneManager.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(SceneManager.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Scene.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Scene.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Resources.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Resources.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(CommandQueue.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(CommandQueue.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Material.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Material.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(MeshRenderer.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(MeshRenderer.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Camera.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Camera.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Transform.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Transform.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(PathManager.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(PathManager.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(EngineGUI.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(EngineGUI.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Light.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Light.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Texture.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Texture.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(pch.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(pch.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Object.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Object.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Device.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Device.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(SwapChain.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(SwapChain.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(RootSignature.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(RootSignature.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(ConstantBuffer.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(ConstantBuffer.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(TableDescriptorHeap.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(TableDescriptorHeap.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(RenderTargetGroup.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(RenderTargetGroup.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Input.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Input.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Timer.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Timer.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Mesh.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Mesh.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Shader.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Shader.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Frustum.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL'에 대해 불일치가 검색되었습니다. '2' 값이 '0'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+Engine.lib(Frustum.obj) : error LNK2038: 'RuntimeLibrary'에 대해 불일치가 검색되었습니다. 'MDd_DynamicDebug' 값이 'MD_DynamicRelease'(Billboard.obj에 위치) 값과 일치하지 않습니다.
+LINK : warning LNK4098: 'MSVCRTD' defaultlib가 다른 라이브러리와 충돌합니다. /NODEFAULTLIB:library를 사용하십시오.
+Engine.lib(Input.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Mesh.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Shader.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Frustum.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Texture.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(pch.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Object.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(RenderTargetGroup.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Camera.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Transform.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(PathManager.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(EngineGUI.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Scene.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Resources.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(CommandQueue.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Material.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(GameObject.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Engine.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(EnginePch.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(SceneManager.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__invalid_parameter
+Engine.lib(Input.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Mesh.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Shader.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Frustum.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Texture.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(pch.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Object.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(RenderTargetGroup.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Camera.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Transform.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(PathManager.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(EngineGUI.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Scene.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Resources.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(CommandQueue.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Material.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(GameObject.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Engine.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(EnginePch.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(SceneManager.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtDbgReport
+Engine.lib(Engine.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__CrtSetDbgFlag
+Engine.lib(pch.obj) : error LNK2001: 확인할 수 없는 외부 기호 __imp__calloc_dbg
+D:\Cpp\DirectX12\10_MultipleRenderTarget\Output\Client.exe : fatal error LNK1120: 4개의 확인할 수 없는 외부 참조입니다.

@@ -78,7 +78,7 @@ void Texture::Load(const wstring& path)
 		subResources.data()
 	);
 
-	GEngine->GetCmdQueue()->FlushResourceCommnadQueue();
+	GEngine->GetGraphicsCmdQueue()->FlushResourceCommnadQueue();
 
 	/*----------------------------------------------------------*/
 
@@ -105,16 +105,20 @@ void Texture::Create(DXGI_FORMAT format, uint32 width, uint32 height, const D3D1
 	desc.Flags = resFlags;
 
 	D3D12_CLEAR_VALUE optimizedClearValue = {};
+	D3D12_CLEAR_VALUE* pOptimizedClearValue =nullptr;
+
 	D3D12_RESOURCE_STATES resourcesStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
 
-	if (resFlags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) {		// 깊이용도가 가능?
+	if (resFlags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) {		// 깊이용도가 가능
 		resourcesStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE;
 		optimizedClearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
+		pOptimizedClearValue = &optimizedClearValue;
 	}
-	else if (resFlags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) {	// 렌더타겟으로 가능?
-		resourcesStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET;
+	else if (resFlags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) {	// 렌더타겟으로 가능
+		resourcesStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
 		float arrFloat[4] = { clearColor.x,clearColor.y,clearColor.z,clearColor.w };
 		optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
+		pOptimizedClearValue = &optimizedClearValue;
 	}
 
 	HRESULT hr = DEVICE->CreateCommittedResource(
@@ -122,7 +126,7 @@ void Texture::Create(DXGI_FORMAT format, uint32 width, uint32 height, const D3D1
 		heapFlags,
 		&desc,
 		resourcesStates,
-		&optimizedClearValue,
+		pOptimizedClearValue,
 		IID_PPV_ARGS(&_tex2D)
 	);
 
@@ -139,6 +143,7 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> tex2D)
 	// - DSV 단독 (조합X)		엔진니어가 사용하는 DepthStencil
 	// - SRV				유저가 사용하는 경우
 	// - RTV + SRV			엔진니어가 사용하는 RenderTarget
+	// - RTV + SRV + UAV	엔진니어가 사용하는 UnorderedAccessView
 
 	D3D12_RESOURCE_DESC desc = tex2D->GetDesc();
 
@@ -168,6 +173,24 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> tex2D)
 			DEVICE->CreateRenderTargetView(_tex2D.Get(), nullptr, rtvHeapBegin);
 		}
 		
+		if (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) {
+			// UAV
+			D3D12_DESCRIPTOR_HEAP_DESC uavHeapDesc = {};
+			uavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+			uavHeapDesc.NumDescriptors = 1;
+			uavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+			uavHeapDesc.NodeMask = 0;
+			DEVICE->CreateDescriptorHeap(&uavHeapDesc, IID_PPV_ARGS(&_uavHeap));
+
+			_uavHeapBegin = _uavHeap->GetCPUDescriptorHandleForHeapStart();
+
+			D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+			uavDesc.Format = _image.GetMetadata().format;
+			uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+
+			DEVICE->CreateUnorderedAccessView(_tex2D.Get(), nullptr, &uavDesc, _uavHeapBegin);
+		}
+
 		// SRV
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		heapDesc.NumDescriptors = 1;

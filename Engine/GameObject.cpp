@@ -5,6 +5,7 @@
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "Light.h"
+#include "ParticleSystem.h"
 
 uint32 GameObject::ID = 0;
 
@@ -130,5 +131,11 @@ shared_ptr<Light> GameObject::GetLight()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::LIGHT);
 	return static_pointer_cast<Light>(component);
+}
+
+shared_ptr<ParticleSystem> GameObject::GetParticleSystem()
+{
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::PARTICLE_SYSTEM);
+	return static_pointer_cast<ParticleSystem>(component);
 }
 

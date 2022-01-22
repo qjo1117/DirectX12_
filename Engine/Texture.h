@@ -21,7 +21,10 @@ public:
 public:
 	/* ----- Helper Function ----- */
 	D3D12_CPU_DESCRIPTOR_HANDLE		GetSRVCpuHandle() { return _srvHeapBegin; }
+	D3D12_CPU_DESCRIPTOR_HANDLE		GetUAVCpuHandle() { return _uavHeapBegin; }
+
 	D3D12_GPU_DESCRIPTOR_HANDLE		GetSRVGpuHandle() { return _srvGpuHandle; }
+
 	
 	ComPtr<ID3D12Resource>			GetTex2D() { return _tex2D; }
 	ComPtr<ID3D12DescriptorHeap>	GetSRV() { return _srvHeap; }
@@ -40,9 +43,11 @@ private:
 	ComPtr<ID3D12DescriptorHeap>	_srvHeap;
 	ComPtr<ID3D12DescriptorHeap>	_rtvHeap;
 	ComPtr<ID3D12DescriptorHeap>	_dsvHeap;
+	ComPtr<ID3D12DescriptorHeap>	_uavHeap;
 
 private:
 	D3D12_CPU_DESCRIPTOR_HANDLE		_srvHeapBegin = {};
+	D3D12_CPU_DESCRIPTOR_HANDLE		_uavHeapBegin = {};
 	D3D12_GPU_DESCRIPTOR_HANDLE		_srvGpuHandle = {};
 };
 

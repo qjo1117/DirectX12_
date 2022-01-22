@@ -1,19 +1,23 @@
 #pragma once
 
 
-#define DEVICE				GEngine->GetDevice()->GetDevice()
-#define CMD_LIST			GEngine->GetCmdQueue()->GetCmdList()
-#define ROOT_SIGNATURE		GEngine->GetRootSignature()->GetSignature()
-#define RESOURCE_CMD_LIST	GEngine->GetCmdQueue()->GetResourceCmdList()
-#define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
+#define DEVICE				        GEngine->GetDevice()->GetDevice()
+#define GRAPHICS_CMD_LIST	        GEngine->GetGraphicsCmdQueue()->GetGraphicsCmdList()
+#define RESOURCE_CMD_LIST	        GEngine->GetGraphicsCmdQueue()->GetResourceCmdList()
+#define COMPUTE_CMD_LIST	        GEngine->GetComputeCmdQueue()->GetComputeCmdList()
 
-#define DELTATIME			GET_SINGLE(Timer)->GetDeltaTime()
-#define INPUT				GET_SINGLE(Input)
-#define GUI					GEngine->GetGUI()
+#define GRAPHICS_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetGraphicsSignature()
+#define COMPUTE_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetComputeSignature()
 
-#define BASE_PATH           "BasePath"
-#define TEXTRUE_PATH        "Texture"
-#define SHADER_PATH         "Shader"
+#define CONST_BUFFER(type)	        GEngine->GetConstantBuffer(type)
+
+#define DELTATIME			        GET_SINGLE(Timer)->GetDeltaTime()
+#define INPUT				        GET_SINGLE(Input)
+#define GUI					        GEngine->GetGUI()
+
+#define BASE_PATH                   "BasePath"
+#define TEXTURE_PATH                "Texture"
+#define SHADER_PATH                 "Shader"
 
 #define DECLARE_SINGLE(type)		\
 private:							\
@@ -30,8 +34,16 @@ public:								\
 
 #define WEAK(T) T.lock()
 
+
+/* ----- 김치삼 교수님께서 알려주신 PROPERTY ----- */
+#define PUBLIC_PROPERTY(type, member)                            \
+public:                                                             \
+type m_##member;                                                    \
+public:                                                             \
+    void Set##member(const type& p_val) { m_##member = p_val; }     \
+    const type& Get##member() { return m_##member; }              
+
 /* ------ 제공 : Utils Forever ------ */
-// magic_enum도 있긴 있지만 이해한 코드를 쓰는게 좋을 것 같아서 사용합니다.
 // https://github.com/utilForever/CubbyEnums/blob/master/Fruit.hpp
 
 enum class LAYER_TYPE : uint32

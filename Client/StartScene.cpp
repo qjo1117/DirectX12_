@@ -42,7 +42,7 @@ StartScene::StartScene()
 		_camera->AddComponent(make_shared<CameraController>());
 		AddGameObject(_camera, LAYER_TYPE::CAMERA);
 	}
-	GEngine->GetCmdQueue()->WaitSync();
+	GEngine->GetGraphicsCmdQueue()->WaitSync();
 }
 
 StartScene::~StartScene()

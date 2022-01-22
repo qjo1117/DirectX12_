@@ -31,6 +31,8 @@ public:
 	/* ----- Test or GUI Function ----- */
 	void	TestEditor();
 	void	TestObjects();
+	void	TestResources();
+	void	TestRenderTargetView();
 
 	void	TestButtonCreateObject();
 
@@ -39,6 +41,7 @@ public:
 	void	MeshRendererComponent();
 	void	CameraComponent();
 	void	LightComponent();
+	void	ParticleComponent();
 
 private:
 	void	RemoveSelectObject();
@@ -46,19 +49,22 @@ private:
 
 private:
 	/* ----- Fick Variable ----- */
-	shared_ptr<GameObject>	_pick;
-	int32					_isPick = -1;
-	shared_ptr<GameObject>	_dragPick;
+	shared_ptr<GameObject>				_goPick;
+	shared_ptr<class Object>			_objPick;
+	int32								_isPick = -1;
+	shared_ptr<GameObject>				_dragPick;
 
-	shared_ptr<GameObject>	_player;
-	shared_ptr<GameObject>	_camera;
+	shared_ptr<GameObject>				_player;
+	shared_ptr<GameObject>				_camera;
 
-	ToolState				_state;
+	ToolState							_state;
 
-	Random					_random;
+	Random								_random;
 
-	vector<function<void()>> _createList;
+	vector<function<void()>>			_createList;
 
-	char					_text[50];
+	vector < shared_ptr<GameObject>>	_renderTargetView;
+
+	char								_text[50];
 };
 

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs />
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\compute.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\deferred.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\forward.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\lighting.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\params.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\particle.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\SimpleTexture.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\skybox.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\utils.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\wirefram.cso</FullPath>
+    </ContentFile>
+  </ContentFiles>
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

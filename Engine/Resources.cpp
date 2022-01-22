@@ -1,11 +1,22 @@
 #include "pch.h"
 #include "Resources.h"
 #include "Engine.h"
+#include "MeshRenderer.h"
+#include "Mesh.h"
+#include "Light.h"
+#include "Material.h"
+#include "Texture.h"
+#include "Transform.h"
+#include "GameObject.h"
+#include "MonoBehaviour.h"
+#include "PathManager.h"
+#include "Camera.h"
 
 void Resources::Init()
 {
 	CreateDefaultShader();
 	CreateDefaultMaterial();
+	CreateDefaultGameObject();
 }
 
 shared_ptr<Mesh> Resources::LoadRectangleMesh()
@@ -34,6 +45,54 @@ shared_ptr<Mesh> Resources::LoadRectangleMesh()
 	shared_ptr<Mesh> mesh = make_shared<Mesh>();
 	mesh->Init(vec, idx);
 	Add(L"Rectangle", mesh);
+
+	return mesh;
+}
+
+shared_ptr<Mesh> Resources::LoadCircleMesh()
+{
+	shared_ptr<Mesh> findMesh = Get<Mesh>(L"Circle");
+	if (findMesh)
+		return findMesh;
+
+	uint32 sliceCount = 20;
+
+	vector<Vertex> vertices;
+	vector<uint32> indices;
+
+	// 윗 뚜껑
+	{
+		// 버텍스
+		float y = 0.0f;
+		float phi = 2.0f * XM_PI / (float)sliceCount;
+
+		for (uint32 i = 0; i <= sliceCount; ++i) {
+			float x = 1.0f * ::cosf(i * phi);
+			float z = 1.0f * ::sinf(i * phi);
+
+			float u = x * 0.5f + 0.5f;
+			float v = z * 0.5f + 0.5f;
+
+			vertices.push_back(Vertex(Vec3(x, y, z), Vec2(u, v), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f)));
+		}
+
+		vertices.push_back(Vertex(Vec3(0.0f, y, 0.0f), Vec2(0.5f, 0.5f), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f)));
+
+
+		// 인덱스
+		uint32 baseIndex = vertices.size() - sliceCount - 2;
+		uint32 centerIndex = vertices.size() - 1;
+
+		for (uint32 i = 0; i < sliceCount; ++i) {
+			indices.push_back(centerIndex);
+			indices.push_back(baseIndex + i + 1);
+			indices.push_back(baseIndex + i);
+		}
+	}
+	
+	shared_ptr<Mesh> mesh = make_shared<Mesh>();
+	mesh->Init(vertices, indices);
+	Add(L"Circle", mesh);
 
 	return mesh;
 }
@@ -227,6 +286,212 @@ shared_ptr<Mesh> Resources::LoadSphereMesh()
 	return mesh;
 }
 
+shared_ptr<Mesh> Resources::LoadCylinderMesh()
+{
+	shared_ptr<Mesh> findMesh = Get<Mesh>(L"Cylinder");
+	if (findMesh)
+		return findMesh;
+
+	float topRadius = 0.5f;
+	float bottomRadius = 0.5f;
+
+	uint32 sliceCount = 10;
+	uint32 stackCount = 10;
+
+	float height = 2.5f;
+
+	vector<Vertex> vertices;
+
+	// 실린더의 높이만큼을 몇개의 사각형으로 구성하지
+	// Ex) stackCount에 2개가 들어오면 실린더의 한면이 2개의 사각형으로 구성됨
+	// (두개를 합친 사각형 높이 = height)
+	float stackHeight = height / static_cast<float>(stackCount);
+
+	// 위뚜껑과 아래뚜껑의 반지름이 다를 경우 반지름을 맞춰주기 위함.
+	float radiusStep = (topRadius - bottomRadius) / static_cast<float>(stackCount);
+
+	uint32 ringCount = stackCount + 1;
+
+	for (uint32 i = 0; i < ringCount; ++i) {
+		float y = (-0.5f * height) + (i * stackHeight);
+		float r = bottomRadius + (i * radiusStep);
+		float phi = 2.0f * XM_PI / (float)sliceCount;
+
+		for (uint32 k = 0; k <= sliceCount; ++k) {
+			float x = r * ::cosf(k * phi);
+			float z = r * ::sinf(k * phi);
+
+			Vertex vertex;
+			vertex.pos = Vec3(x, y, z);
+
+			vertex.tangent = Vec3(-z, 0.0f, x);
+			float dr = bottomRadius - topRadius;
+			Vec3 biTangent = Vec3(dr * x, -height, dr * z);
+
+			vertex.normal.Cross(vertex.tangent, biTangent);
+			vertex.normal.Normalize();
+
+			float u = k / static_cast<float>(sliceCount);
+			float v = i / static_cast<float>(ringCount);
+			vertex.uv = Vec2(u, v);
+
+			vertices.push_back(vertex);
+		}
+	}
+
+	vector<uint32> indices;
+	uint32 ringVertexCount = sliceCount + 1;
+	for (uint32 y = 0; y < stackCount; ++y) {
+		for (uint32 x = 0; x < sliceCount; ++x) {
+			indices.push_back(y * ringVertexCount + x);
+			indices.push_back((y + 1) * ringVertexCount + x);
+			indices.push_back((y + 1) * ringVertexCount + (x + 1));
+
+			indices.push_back(y * ringVertexCount + x);
+			indices.push_back((y + 1) * ringVertexCount + (x + 1));
+			indices.push_back(y * ringVertexCount + (x + 1));
+		}
+	}
+
+
+	// 윗 뚜껑
+	{
+		// 버텍스
+		float y = 0.5f * height;
+		float phi = 2.0f * XM_PI / (float)sliceCount;
+
+		for (uint32 i = 0; i <= sliceCount; ++i) {
+			float x = topRadius * ::cosf(i * phi);
+			float z = topRadius * ::sinf(i * phi);
+
+			float u = x * 0.5f + 0.5f;
+			float v = z * 0.5f + 0.5f;
+
+			vertices.push_back(Vertex(Vec3(x, y, z), Vec2(u, v), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f)));
+		}
+
+		vertices.push_back(Vertex(Vec3(0.0f, y, 0.0f), Vec2(0.5f, 0.5f), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f)));
+
+
+		// 인덱스
+		uint32 baseIndex = vertices.size() - sliceCount - 2;
+		uint32 centerIndex = vertices.size() - 1;
+
+		for (uint32 i = 0; i < sliceCount; ++i) {
+			indices.push_back(centerIndex);
+			indices.push_back(baseIndex + i + 1);
+			indices.push_back(baseIndex + i);
+		}
+	}
+
+	// 아래뚜껑
+	{
+		// 버텍스
+		float y = -0.5f * height;
+		float phi = 2.0f * XM_PI / (float)sliceCount;
+
+		for (uint32 i = 0; i <= sliceCount; ++i) {
+			float x = bottomRadius * ::cosf(i * phi);
+			float z = bottomRadius * ::sinf(i * phi);
+
+			float u = x * 0.5f + 0.5f;
+			float v = z * 0.5f + 0.5f;
+
+			vertices.push_back(Vertex(Vec3(x, y, z), Vec2(u, v), Vec3(0.0f, -1.0f, 0.0f), Vec3(0.0f, -1.0f, 0.0f)));
+		}
+		vertices.push_back(Vertex(Vec3(0.0f, y, 0.0f), Vec2(0.5f, 0.5f), Vec3(0.0f, -1.0f, 0.0f), Vec3(0.0f, -1.0f, 0.0f)));
+
+
+		// 인덱스
+		uint32 baseIndex = vertices.size() - sliceCount - 2;
+		uint32 centerIndex = vertices.size() - 1;
+
+		for (uint32 i = 0; i < sliceCount; ++i) {
+			indices.push_back(centerIndex);
+			indices.push_back(baseIndex + i);
+			indices.push_back(baseIndex + i + 1);
+
+		}
+	}
+	shared_ptr<Mesh> mesh = make_shared<Mesh>();
+	mesh->Init(vertices, indices);
+	Add(L"Cylinder", mesh);
+
+	return mesh;
+}
+
+shared_ptr<Mesh> Resources::LoadConeMesh()
+{
+	shared_ptr<Mesh> findMesh = Get<Mesh>(L"Cone");
+	if (findMesh)
+		return findMesh;
+
+	uint32 sliceCount = 20;
+
+	vector<Vertex> vertices;
+	vector<uint32> indices;
+	float height = 2.0f;
+
+	// 윗 뚜껑
+	{
+		// 버텍스
+		float y = 0.0f;
+		float phi = 2.0f * XM_PI / (float)sliceCount;
+
+		for (uint32 i = 0; i <= sliceCount; ++i) {
+			float x = 1.0f * ::cosf(i * phi);
+			float z = 1.0f * ::sinf(i * phi);
+
+			float u = x * 0.5f + 0.5f;
+			float v = z * 0.5f + 0.5f;
+
+			vertices.push_back(Vertex(Vec3(x, y, z), Vec2(u, v), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f)));
+		}
+
+		vertices.push_back(Vertex(Vec3(0.0f, height, 0.0f), Vec2(0.5f, 0.5f), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f)));
+
+
+		// 인덱스
+		uint32 baseIndex = vertices.size() - sliceCount - 2;
+		uint32 centerIndex = vertices.size() - 1;
+
+		for (uint32 i = 0; i < sliceCount; ++i) {
+			indices.push_back(centerIndex);
+			indices.push_back(baseIndex + i);
+			indices.push_back(baseIndex + i + 1);
+
+			indices.push_back(centerIndex);
+			indices.push_back(baseIndex + i + 1);
+			indices.push_back(baseIndex + i);
+
+		}
+	}
+
+	shared_ptr<Mesh> mesh = make_shared<Mesh>();
+	mesh->Init(vertices, indices);
+	Add(L"Cone", mesh);
+	return mesh;
+}
+
+shared_ptr<Mesh> Resources::LoadPointMesh()
+{
+	shared_ptr<Mesh> findMesh = Get<Mesh>(L"Point");
+	if (findMesh)
+		return findMesh;
+
+	vector<Vertex> vec(1);
+	vec[0] = Vertex(Vec3(0, 0, 0), Vec2(0.5f, 0.5f), Vec3(0.0f, 0.0f, -1.0f), Vec3(1.0f, 0.0f, 0.0f));
+
+	vector<uint32> idx(1);
+	idx[0] = 0;
+
+	shared_ptr<Mesh> mesh = make_shared<Mesh>();
+	mesh->Init(vec, idx);
+	Add(L"Point", mesh);
+
+	return mesh;
+}
+
 shared_ptr<Texture> Resources::CreateTexture(const wstring& name, DXGI_FORMAT format, uint32 width, uint32 height,
 	const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags,
 	D3D12_RESOURCE_FLAGS resFlags, Vec4 clearColor)
@@ -249,7 +514,7 @@ shared_ptr<Texture> Resources::CreateTextureFromResource(const wstring& name, Co
 
 void Resources::CreateDefaultShader()
 {
-	// Skybox
+	/* ----- Skybox ----- */
 	{
 		ShaderInfo info =
 		{
@@ -259,11 +524,11 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"skybox.fx", info);
+		shader->CreateGraphicsShader(L"skybox.fx", info);
 		Add<Shader>(L"Skybox", shader);
 	}
 
-	// Deferred (Deferred)
+	/* ----- Deferred (Deferred) ----- */
 	{
 		ShaderInfo info =
 		{
@@ -271,11 +536,11 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"deferred.fx", info);
+		shader->CreateGraphicsShader(L"deferred.fx", info);
 		Add<Shader>(L"Deferred", shader);
 	}
 
-	// Forward (Forward)
+	/* ----- Forward (Forward) ----- */
 	{
 		ShaderInfo info =
 		{
@@ -283,11 +548,24 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"forward.fx", info);
+		shader->CreateGraphicsShader(L"forward.fx", info);
 		Add<Shader>(L"Forward", shader);
 	}
 
-	// Texture (Forward)
+	/* ----- Wirefram (Forward) ----- */
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::FORWARD,
+			RASTERIZER_TYPE::WIREFRAME,
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"wirefram.fx", info);
+		Add<Shader>(L"Wirefram", shader);
+	}
+
+	/* ----- Texture (Forward) ----- */
 	{
 		ShaderInfo info =
 		{
@@ -297,11 +575,11 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"forward.fx", info, "VS_Tex", "PS_Tex");
+		shader->CreateGraphicsShader(L"forward.fx", info, "VS_Tex", "PS_Tex");
 		Add<Shader>(L"Texture", shader);
 	}
 
-	// DirLight
+	/* ----- DirLight ----- */
 	{
 		ShaderInfo info =
 		{
@@ -312,11 +590,11 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"lighting.fx", info, "VS_DirLight", "PS_DirLight");
+		shader->CreateGraphicsShader(L"lighting.fx", info, "VS_DirLight", "PS_DirLight");
 		Add<Shader>(L"DirLight", shader);
 	}
 
-	// PointLight
+	/* ----- PointLight ----- */
 	{
 		ShaderInfo info =
 		{
@@ -327,11 +605,11 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"lighting.fx", info, "VS_PointLight", "PS_PointLight");
+		shader->CreateGraphicsShader(L"lighting.fx", info, "VS_PointLight", "PS_PointLight");
 		Add<Shader>(L"PointLight", shader);
 	}
 
-	// Final
+	/* ----- Final ----- */
 	{
 		ShaderInfo info =
 		{
@@ -341,8 +619,39 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"lighting.fx", info, "VS_Final", "PS_Final");
+		shader->CreateGraphicsShader(L"lighting.fx", info, "VS_Final", "PS_Final");
 		Add<Shader>(L"Final", shader);
+	}
+
+
+	/* ----- ComputeShader ----- */
+	{
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateComputeShader(L"compute.fx", "CS_Main", "cs_5_0");
+		Add<Shader>(L"ComputeShader", shader);
+	}
+
+
+	/* ----- GraphicsParticle ----- */
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::PARTICLE,
+			RASTERIZER_TYPE::CULL_BACK,
+			DEPTH_STENCIL_TYPE::LESS_NO_WRITE,
+			BLEND_TYPE::ALPHA_BLEND,
+			D3D_PRIMITIVE_TOPOLOGY_POINTLIST
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"particle.fx", info, "VS_Main", "PS_Main", "GS_Main");
+		Add<Shader>(L"Particle", shader);
+	}
+	/* ----- ComputeParticle ----- */
+	{
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateComputeShader(L"particle.fx", "CS_Main", "cs_5_0");
+		Add<Shader>(L"ComputeParticle", shader);
 	}
 }
 
@@ -395,4 +704,119 @@ void Resources::CreateDefaultMaterial()
 		material->SetTexture(2, tex3);
 		Add<Material>(L"Final", material);
 	}
+
+	/* ----- Compute Shader ----- */
+	{
+		shared_ptr<Shader> shader = Get<Shader>(L"ComputeShader");
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(shader);
+		Add<Material>(L"ComputeShader", material);
+	}
+
+	/* ----- Particle ----- */
+	{
+		shared_ptr<Shader> shader = Get<Shader>(L"Particle");
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(shader);
+		Add<Material>(L"Particle", material);
+	}
+
+	/* ----- Compute Shader ----- */
+	{
+		shared_ptr<Shader> shader = Get<Shader>(L"ComputeParticle");
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(shader);
+		Add<Material>(L"ComputeParticle", material);
+	}
+}
+
+void Resources::CreateDefaultGameObject()
+{
+	const wstring& texPath = GET_SINGLE(PathManager)->FindPath(TEXTURE_PATH);
+	const wstring& shaderPath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH);
+
+#pragma region SkyBox
+	{
+		shared_ptr<GameObject> skybox = make_shared<GameObject>();
+		skybox->AddComponent(make_shared<Transform>());
+
+		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+		{
+			meshRenderer->SetMesh(GET_SINGLE(Resources)->LoadCubeMesh());
+		}
+		{
+			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Skybox");
+			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Skybox", texPath + L"SkyBox_1.jpg");
+			material->SetTexture(0, texture);
+			meshRenderer->SetMaterial(material);
+		}
+		skybox->AddComponent(meshRenderer);
+		skybox->SetCheckFrustum(false);
+		skybox->SetLayer(LAYER_TYPE::SKYBOX);
+		Add<GameObject>(L"Skybox", skybox);
+	}
+#pragma endregion
+
+#pragma region Main Camera
+	{
+		shared_ptr<GameObject> camera = make_shared<GameObject>();
+		camera->AddComponent(make_shared<Transform>());
+		camera->AddComponent(make_shared<Camera>());
+		camera->SetGUIName(L"MainCamera");
+
+		camera->GetCamera()->SetCullingMaskLayerOnOff(LAYER_TYPE::UI, true); // UI는 안찍음
+		Add<GameObject>(L"MainCamera", camera);
+	}
+#pragma endregion
+
+#pragma region UI Camera
+	{
+		shared_ptr<GameObject> camera = make_shared<GameObject>();
+
+		camera->AddComponent(make_shared<Transform>());
+		camera->AddComponent(make_shared<Camera>());
+
+		camera->SetGUIName(L"UI_Camera");
+
+		camera->GetTransform()->SetLocalPosition(Vec3(0.0f, 0.0f, 0.0f));
+		camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
+
+		camera->GetCamera()->SetCullingMaskAll();
+		camera->GetCamera()->SetCullingMaskLayerOnOff(LAYER_TYPE::UI, false);	// UI만 찍음
+
+		Add<GameObject>(L"UICamera", camera);
+	}
+#pragma endregion
+
+#pragma region Directional Light
+	{
+		shared_ptr<GameObject> light = make_shared<GameObject>();
+		light->SetGUIName(L"Directional Light");
+		light->AddComponent(make_shared<Transform>());
+		light->AddComponent(make_shared<Light>());
+		light->GetLight()->SetLightDirection(Vec3(0.0f, -1.0f, 0.0f));
+		light->GetLight()->SetLightType(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+		light->GetLight()->SetDiffuse(Vec3(0.7f, 0.5f, 0.6f));
+		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
+		light->GetLight()->SetSpecular(Vec3(0.2f, 0.2f, 0.2f));
+
+		Add<GameObject>(L"DirectionalLight", light);
+	}
+#pragma endregion
+
+#pragma region Point Light
+	{
+		shared_ptr<GameObject> light = make_shared<GameObject>();
+		light->SetGUIName(L"Point Light");
+		light->AddComponent(make_shared<Transform>());
+		light->AddComponent(make_shared<Light>());
+		light->GetLight()->SetLightType(LIGHT_TYPE::POINT_LIGHT);
+		light->GetLight()->SetDiffuse(Vec3(0.5f, 0.5f, 0.5f));
+		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
+		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
+		light->GetLight()->SetLightRange(500.0f);
+
+		Add<GameObject>(L"PointLight", light);
+	}
+#pragma endregion
 }
