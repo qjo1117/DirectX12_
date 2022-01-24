@@ -5,4 +5,5 @@ ignore를 할때 lib파일은 보존을 시키고 업로드하고 있습니다!
 
 
 
-[Uploading 123.PNG…]()
+![123](https://user-images.githubusercontent.com/30683513/150716202-3ebe1707-b0bf-47d7-b94e-176b31d43473.PNG)
+
