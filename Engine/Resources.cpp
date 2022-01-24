@@ -11,12 +11,14 @@
 #include "MonoBehaviour.h"
 #include "PathManager.h"
 #include "Camera.h"
+#include "ParticleSystem.h"
 
 void Resources::Init()
 {
 	CreateDefaultShader();
 	CreateDefaultMaterial();
 	CreateDefaultGameObject();
+	CreateDefaultComponent();
 }
 
 shared_ptr<Mesh> Resources::LoadRectangleMesh()
@@ -728,12 +730,24 @@ void Resources::CreateDefaultMaterial()
 		material->SetShader(shader);
 		Add<Material>(L"ComputeParticle", material);
 	}
+
+	/* ----- Test Material(Player) ----- */
+	{
+		shared_ptr<Material> material = make_shared<Material>();
+
+		material->SetTexture(0, GET_SINGLE(Resources)->Load<Texture>(L"Marble", TEXTURE_PATH + L"Marble.jpg"));
+		material->SetTexture(1, GET_SINGLE(Resources)->Load<Texture>(L"MarbleNormal", TEXTURE_PATH + L"Marble_Normal.jpg"));
+		material->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Deferred"));
+
+
+		Add<Material>(L"Player", material);
+	}
 }
 
 void Resources::CreateDefaultGameObject()
 {
-	const wstring& texPath = GET_SINGLE(PathManager)->FindPath(TEXTURE_PATH);
-	const wstring& shaderPath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH);
+	const wstring& texPath = GET_SINGLE(PathManager)->FindPath(TEXTURE_PATH_KEY);
+	const wstring& shaderPath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH_KEY);
 
 #pragma region SkyBox
 	{
@@ -819,4 +833,22 @@ void Resources::CreateDefaultGameObject()
 		Add<GameObject>(L"PointLight", light);
 	}
 #pragma endregion
+}
+
+void Resources::CreateDefaultComponent()
+{
+	Add<Transform>(L"Transform", make_shared<Transform>());
+	Add<Light>(L"Light", make_shared<Light>());
+	Add<Camera>(L"Camera", make_shared<Camera>());
+	{
+		shared_ptr<MeshRenderer> meshRenderer =  make_shared<MeshRenderer>();
+		shared_ptr<Material> material = make_shared <Material>();
+		shared_ptr<Mesh> mesh = LoadCubeMesh();
+		material->SetShader(Get<Shader>(L"Deferred"));
+		meshRenderer->SetMaterial(material);
+		meshRenderer->SetMesh(mesh);
+		Add<MeshRenderer>(L"MeshRenderer", meshRenderer);
+	}
+
+	Add<ParticleSystem>(L"ParticleSystem", make_shared<ParticleSystem>());
 }

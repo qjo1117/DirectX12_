@@ -15,9 +15,12 @@
 #define INPUT				        GET_SINGLE(Input)
 #define GUI					        GEngine->GetGUI()
 
-#define BASE_PATH                   "BasePath"
-#define TEXTURE_PATH                "Texture"
-#define SHADER_PATH                 "Shader"
+#define BASE_PATH_KEY               "BasePath"
+#define TEXTURE_PATH_KEY            "Texture"
+#define SHADER_PATH_KEY             "Shader"
+
+#define TEXTURE_PATH                GET_SINGLE(PathManager)->FindPath(TEXTURE_PATH_KEY)
+#define SHADER_PATH                 GET_SINGLE(PathManager)->FindPath(TEXTURE_PATH_KEY)
 
 #define DECLARE_SINGLE(type)		\
 private:							\

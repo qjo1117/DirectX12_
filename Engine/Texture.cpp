@@ -130,6 +130,8 @@ void Texture::Create(DXGI_FORMAT format, uint32 width, uint32 height, const D3D1
 		IID_PPV_ARGS(&_tex2D)
 	);
 
+
+
 	assert(SUCCEEDED(hr));
 
 	CreateFromResource(_tex2D);
@@ -176,8 +178,8 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> tex2D)
 		if (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) {
 			// UAV
 			D3D12_DESCRIPTOR_HEAP_DESC uavHeapDesc = {};
-			uavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 			uavHeapDesc.NumDescriptors = 1;
+			uavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 			uavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 			uavHeapDesc.NodeMask = 0;
 			DEVICE->CreateDescriptorHeap(&uavHeapDesc, IID_PPV_ARGS(&_uavHeap));

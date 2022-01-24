@@ -54,9 +54,12 @@ public:
 	void SetVec4(uint8 index, Vec4 value) { _params.SetVec4(index, value); }
 
 
+	int32 GetInt(uint8 index) { return _params.intParam[index]; }
+
 	void Dispatch(uint32 x, uint32 y, uint32 z);
 	
 	shared_ptr<class Texture> GetTexture(uint8 index) { return _textures[index]; }
+	shared_ptr<Material> Clone();
 private:
 	/* ----- Material Part Variable ----- */
 	shared_ptr<class Shader>		_shader;

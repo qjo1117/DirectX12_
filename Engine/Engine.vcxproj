@@ -194,6 +194,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InstancingBuffer.h" />
+    <ClInclude Include="InstancingManager.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Material.h" />
@@ -213,9 +214,6 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleMath.h" />
-    <ClInclude Include="stb_image.h" />
-    <ClInclude Include="stb_image_resize.h" />
-    <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="TableDescriptorHeap.h" />
@@ -260,6 +258,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InstancingBuffer.cpp" />
+    <ClCompile Include="InstancingManager.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Macro.cpp" />
     <ClCompile Include="Material.cpp" />

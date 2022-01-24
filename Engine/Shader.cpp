@@ -15,7 +15,7 @@ void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const st
 {
 	_info = info;
 
-	wstring basePath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH) + path;
+	wstring basePath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH_KEY) + path;
 
 	CreateVertexShader(basePath, vs, "vs_5_0");
 	CreatePixelShader(basePath, ps, "ps_5_0");
@@ -30,6 +30,20 @@ void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const st
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12 /* offset */, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20 /* offset */, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32 /* offset */, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+	
+		/* ----- Instancing Matrix ----- */
+		{ "W", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0,  D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "W", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "W", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "W", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WV", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WV", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 80, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WV", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WV", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WVP", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WVP", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 144, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WVP", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 160, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+		{ "WVP", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 176, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
 	};
 
 	/* ----- 어떤 형식, 어떤 자원을 쓸것인지 정보를 전달한다. ----- */
@@ -60,7 +74,7 @@ void Shader::CreateComputeShader(const wstring& path, const string& name, const 
 {
 	_info.shaderType = SHADER_TYPE::COMPUTE;
 
-	wstring basePath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH) + path;
+	wstring basePath = GET_SINGLE(PathManager)->FindPath(SHADER_PATH_KEY) + path;
 
 	CreateShader(basePath, name, version, _csBlob, _computePipelineDesc.CS);
 	_computePipelineDesc.pRootSignature = COMPUTE_ROOT_SIGNATURE.Get();

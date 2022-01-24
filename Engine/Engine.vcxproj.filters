@@ -177,6 +177,9 @@
     <ClCompile Include="InstancingBuffer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="InstancingManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -326,14 +329,8 @@
     <ClInclude Include="InstancingBuffer.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Utils\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image_resize.h">
-      <Filter>Utils\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image_write.h">
-      <Filter>Utils\Engine</Filter>
+    <ClInclude Include="InstancingManager.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

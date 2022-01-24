@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "ParticleSystem.h"
+#include "InstancingManager.h"
 
 Matrix Camera::S_MatView;
 Matrix Camera::S_MatProjection;
@@ -93,9 +94,8 @@ void Camera::Render_Deferred()
 	S_MatView = _matView;
 	S_MatProjection = _matProjection;
 
-	for (const shared_ptr<GameObject>& go : _vecDeferred) {
-		go->GetMeshRenderer()->Render();
-	}
+	// 그냥 그리지말고 나눠준다.
+	GET_SINGLE(InstancingManager)->Render(_vecDeferred);
 }
 
 void Camera::Render_Forward()
@@ -103,9 +103,7 @@ void Camera::Render_Forward()
 	S_MatView = _matView;
 	S_MatProjection = _matProjection;
 
-	for (const shared_ptr<GameObject>& go : _vecForward) {
-		go->GetMeshRenderer()->Render();
-	}
+	GET_SINGLE(InstancingManager)->Render(_vecForward);
 
 	for (const shared_ptr<GameObject>& go : _vecParticle) {
 		go->GetParticleSystem()->Render();

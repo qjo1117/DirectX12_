@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Object.h"
+#include "Resources.h"
 
 class Component;
 class Transform;

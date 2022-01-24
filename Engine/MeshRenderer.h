@@ -4,6 +4,17 @@
 class Mesh;
 class Material;
 
+
+union InstanceID
+{
+	struct
+	{
+		uint32 meshID;
+		uint32 materialID;
+	};
+	uint64 id;
+};
+
 /*------------------
 	MeshRenderer
 -------------------*/
@@ -19,11 +30,13 @@ public:
 	void SetMesh(shared_ptr<Mesh> mesh) { _mesh = mesh; }
 	void SetMaterial(shared_ptr<Material> material) { _material = material; }
 
-	shared_ptr<Material> GetMaterial() { return _material; }
-	shared_ptr<Mesh> GetMesh() { return _mesh; }
+	inline shared_ptr<Material> GetMaterial() { return _material; }
+	inline shared_ptr<Mesh> GetMesh() { return _mesh; }
+	uint64 GetInstanceID();
 
 	/* ----- virtual Function ----- */
 	void Render();
+	void Render(shared_ptr<class InstancingBuffer>& buffer);
 
 private:
 	/* ----- MeshRender Variable ----- */

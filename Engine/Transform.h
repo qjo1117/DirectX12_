@@ -42,8 +42,9 @@ public:
 
 public:
 	/* ----- Parent Helper Function ----- */
-	void				SetParent(shared_ptr<Transform> parent) { _parent = parent; }
+	void				SetParent(shared_ptr<Transform> parent);
 	weak_ptr<Transform> GetParent() { return _parent; }
+	vector<weak_ptr<Transform>>& GetChilds() { return _childs; }
 
 private:
 	/* ----- Local Transform Variable ----- */
@@ -56,6 +57,7 @@ private:
 	Matrix _matWorld = {};
 
 	/* ----- Parent Mapping Variable ----- */
-	weak_ptr<Transform> _parent;
+	weak_ptr<Transform>				_parent;
+	vector<weak_ptr<Transform>>		_childs;
 };
 

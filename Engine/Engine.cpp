@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Resources.h"
 #include "PathManager.h"
+#include "InstancingManager.h"
 
 void Engine::Init(const WindowInfo& info)
 {
@@ -84,6 +85,7 @@ void Engine::Render()
 
 void Engine::Update()
 {
+	GET_SINGLE(InstancingManager)->ClearBuffer();
 
 	GET_SINGLE(Input)->Update();
 	GET_SINGLE(Timer)->Update();

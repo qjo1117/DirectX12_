@@ -1,25 +1,31 @@
 #include "pch.h"
+#include "Utils.h"
 #include "ToolScene.h"
+#include "RenderTargetGroup.h"
 #include "GameObject.h"
 #include "Engine.h"
+#include "EngineGUI.h"
+#include "Resources.h"
+#include "PathManager.h"
+
+
 #include "Material.h"
 #include "MeshRenderer.h"
 #include "Transform.h"
 #include "Timer.h"
 #include "Camera.h"
+#include "Light.h"
+
 #include "CameraController.h"
 #include "RotationXComponent.h"
-#include "EngineGUI.h"
-#include "Resources.h"
 #include "PlayerController.h"
-#include "PathManager.h"
-#include "Light.h"
-#include "Utils.h"
+
+
+
 #include "Billboard.h"
-#include "RenderTargetGroup.h"
 #include "ParticleSystem.h"
 #include "Component.h"
-#include "RenderTargetGroup.h"
+
 
 ToolScene::ToolScene()
 {
@@ -34,7 +40,7 @@ ToolScene::ToolScene()
 		}
 		{
 			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Skybox");
-			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Skybox", L"..\\Resources\\Texture\\SkyBox_1.jpg");
+			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Skybox", L"..\\Resources\\Texture\\SkyBox_0.jpg");
 			material->SetTexture(0, texture);
 			meshRenderer->SetMaterial(material);
 		}
@@ -48,56 +54,36 @@ ToolScene::ToolScene()
 	{
 		shared_ptr<GameObject> go = make_shared<GameObject>();
 		go->Init();
-		go->SetGUIName(L"Player1");
-
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Deferred");
-		material->SetShader(shader);
-		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadConeMesh();
-
-		shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Picture1", L"..\\Resources\\Texture\\Picture1.png");
-		material->SetTexture(0, texture);
-
-
-		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
-		renderer->SetMesh(mesh);
-		renderer->SetMaterial(material);
-
-		go->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-		go->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 150.f));
-
-		go->AddComponent(renderer);
-		go->GetOrAddComponent<PlayerController>();
-		AddGameObject(go, LAYER_TYPE::DEFAULT);
+		go->SetGUIName(L"Player");
+		go->AddComponent(make_shared<Transform>());
+		go->GetTransform()->SetLocalScale(Vec3(1.0f, 1.0f, 1.0f));
 		_player = go;
+		AddGameObject(go, LAYER_TYPE::DEFAULT);
 	}
 #pragma endregion
+
 #pragma region Player
 	{
-		shared_ptr<GameObject> go = make_shared<GameObject>();
-		go->Init();
-		go->SetGUIName(L"Player");
+		for (uint32 i = 0; i < 100; ++i) {
+			shared_ptr<GameObject> go = make_shared<GameObject>();
+			go->Init();
+			go->SetGUIName(L"Player" + std::to_wstring(i));
 
-		shared_ptr<Material> material = make_shared<Material>();
+			shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
+			renderer->SetMesh(GET_SINGLE(Resources)->LoadCubeMesh());
 
-		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Wirefram");
-		material->SetShader(shader);
-		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCylinderMesh();
+			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Player");
+			renderer->SetMaterial(material);
 
-		shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Picture", L"..\\Resources\\Texture\\Picture2.png");
-		material->SetTexture(0, texture);
+			go->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+			go->GetTransform()->SetLocalPosition(Vec3(-750.0f + ((i % 10) * 150.0f), (i / 10) * 150.0f, 150.f));
 
-		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
-		renderer->SetMesh(mesh);
-		renderer->SetMaterial(material);
+			go->AddComponent(renderer);
+			go->GetOrAddComponent<PlayerController>();
+			AddGameObject(go, LAYER_TYPE::DEFAULT);
 
-		go->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-		go->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 150.f));
-
-		go->AddComponent(renderer);
-		go->GetOrAddComponent<PlayerController>();
-		AddGameObject(go, LAYER_TYPE::DEFAULT);
+			go->GetTransform()->SetParent(_player->GetTransform());
+		}
 	}
 #pragma endregion
 
@@ -116,6 +102,9 @@ ToolScene::ToolScene()
 		material->SetTexture(0, GET_SINGLE(Resources)->Load<Texture>(L"Metal", L"..\\Resources\\Texture\\Metal.jpg"));
 		// Normal
 		material->SetTexture(1, GET_SINGLE(Resources)->Load<Texture>(L"MetalNormal", L"..\\Resources\\Texture\\Metal_Normal.jpg"));
+
+		GET_SINGLE(Resources)->Add<Material>(L"Metal", material);
+
 
 		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
 		renderer->SetMesh(mesh);
@@ -271,13 +260,13 @@ ToolScene::ToolScene()
 		shared_ptr<GameObject> light = make_shared<GameObject>();
 		light->SetGUIName(L"Spot Light");
 		light->AddComponent(make_shared<Transform>());
-		light->GetTransform()->SetLocalPosition(Vec3(0.f, 50.f, -0.0f));
+		light->GetTransform()->SetLocalPosition(Vec3(0.0f, 0.0f, 0.0f));
 		light->GetTransform()->SetLocalScale(Vec3(1.0f, 1.0f, 1.0f));
 		light->AddComponent(make_shared<Light>());
 		light->GetLight()->SetLightType(LIGHT_TYPE::SPOT_LIGHT);
-		light->GetLight()->SetDiffuse(Vec3(0.0f, 0.5f, 0.5f));
-		light->GetLight()->SetAmbient(Vec3(0.0f, 0.3f, 0.0f));
-		light->GetLight()->SetSpecular(Vec3(0.0f, 0.3f, 0.0f));
+		light->GetLight()->SetDiffuse(Vec3(0.5f, 0.5f, 0.5f));
+		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
+		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
 		light->GetLight()->SetLightRange(1000.0f);
 
 		AddGameObject(light);
@@ -292,10 +281,13 @@ ToolScene::ToolScene()
 		particle->AddComponent(make_shared<Transform>());
 		particle->AddComponent(make_shared<ParticleSystem>());
 		particle->GetTransform()->SetLocalPosition(Vec3(0.0f, 0.0f, 100.0f));
-
+		particle->GetParticleSystem()->SetTexture(GET_SINGLE(Resources)->Load<Texture>(L"Bufferfly", TEXTURE_PATH + L"Particle\\Butterfly.png"));
+		
 		AddGameObject(particle);
 	}
 #pragma endregion
+
+	
 
 
 	GEngine->GetGraphicsCmdQueue()->WaitSync();
@@ -306,6 +298,8 @@ ToolScene::ToolScene()
 	GUI->AddFunction([=]() { TestButtonCreateObject(); });
 	GUI->AddFunction([=]() { TestResources(); });
 	GUI->AddFunction([=]() { TestRenderTargetView(); });
+
+	_defauleImage = GEngine->GetGUI()->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart().ptr ;
 }
 
 ToolScene::~ToolScene()
@@ -363,7 +357,7 @@ void ToolScene::TestEditor()
 	ImGui::Begin("Editor");
 
 	// 선택한 녀석이 없으면 종료
-	if (_isPick == -1) {
+	if (_goPick == nullptr) {
 		ImGui::End();
 		return;
 	}
@@ -392,7 +386,6 @@ void ToolScene::TestEditor()
 	}
 	
 	// MeshRenderer
-	// TODO : 아직 여러가지 매쉬들이 존재할때 따로 창으로 보여주는 작업은 만들지 못함.
 	if (_goPick->GetFixedComponent(COMPONENT_TYPE::MESH_RENDERER) != nullptr) {
 		MeshRendererComponent();
 	}
@@ -420,6 +413,30 @@ void ToolScene::TestEditor()
 		}
 	}
 
+	if (ImGui::Button("AddComponent", ImVec2(100.0f, 35.0f)))
+	{
+		ImGui::OpenPopup("SelectComponent");
+		ImGui::Text("Edit name:");
+	}
+
+	if (ImGui::BeginPopup("SelectComponent"))
+	{
+		ImGui::Text("Components");
+		ImGui::Separator();
+		string guiName;
+
+		for (auto& component : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::COMPONENT)) {
+			guiName.assign(component.first.begin(), component.first.end());
+			if (ImGui::Selectable(guiName.data())) {
+				_goPick->AddComponent(static_pointer_cast<Component>(component.second));
+			}
+		}
+
+		::memset(_text, 0, MAX_PATH);
+		ImGui::InputText("##edit", _text, IM_ARRAYSIZE(_text));
+		ImGui::EndPopup();
+	}
+
 	ImGui::End();
 }
 
@@ -433,41 +450,14 @@ void ToolScene::TestObjects()
 
 	if (ImGui::TreeNode("Tool Scene Object List")) {
 		uint32 count = 0;
-		
-		// TODO : 미완 오른쪽 클릭하면 Popup창 나오게 하기
-		if (io.MouseDown[1]) {
-			// TODO : 이름을 뭘로 할지 고민해보자
-			ImGui::OpenPopup("my_select_popup"); 
-
-			if (ImGui::BeginPopup("my_select_popup")) {
-				ImGui::Text("Create");
-				
-				if (ImGui::Selectable("cube")) {
-					CreateCubeGameObject();
-				}
-
-				ImGui::EndPopup();
-			}
-
-		}
 
 		// Editor Object Index Change
 		vector<shared_ptr<GameObject>>& objects = GetAllGameObjects();
 		for (int32 i = 0; i < objects.size(); ++i) {
-			if (ImGui::Selectable(objects[i]->GetGUIName().data())) {
-				_isPick = count;
-				_goPick = objects[i];
+			if (objects[i]->GetTransform()->GetParent().lock() != nullptr) {
+				continue;
 			}
-
-			// Editor Object Index Change
-			if (ImGui::IsItemActive() && !ImGui::IsItemHovered()) {
-				int32 i_next = i + (ImGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
-				_dragPick = objects[i];			// 혹시나...?
-				if (0 <= i_next && i_next < objects.size()) {
-					::swap(objects[i], objects[i_next]);
-					ImGui::ResetMouseDragDelta();
-				}
-			}
+			ParentTree(objects[i]);
 		}
 
 		ImGui::TreePop();
@@ -503,8 +493,12 @@ void ToolScene::TestResources()
 	if (ImGui::TreeNode("Texture")) {
 		for (const pair<wstring, shared_ptr<Object>>& tex : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::TEXTURE)) {
 			guiName.assign(tex.first.begin(), tex.first.end());
-			if (ImGui::Selectable(guiName.data())) {
+
+			ImGui::Selectable(guiName.data());
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("TEXTURE_DRAG", nullptr, 0);
 				_objPick = tex.second;
+				ImGui::EndDragDropSource();
 			}
 		}
 		ImGui::TreePop();
@@ -513,8 +507,12 @@ void ToolScene::TestResources()
 	if (ImGui::TreeNode("Shader")) {
 		for (const pair<wstring, shared_ptr<Object>>& shader : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::SHADER)) {
 			guiName.assign(shader.first.begin(), shader.first.end());
-			if (ImGui::Selectable(guiName.data())) {
+			
+			ImGui::Selectable(guiName.data());
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("SHADER_DRAG", nullptr, 0);
 				_objPick = shader.second;
+				ImGui::EndDragDropSource();
 			}
 		}
 		ImGui::TreePop();
@@ -523,8 +521,12 @@ void ToolScene::TestResources()
 	if (ImGui::TreeNode("Material")) {
 		for (const pair<wstring, shared_ptr<Object>>& material : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::MATERIAL)) {
 			guiName.assign(material.first.begin(), material.first.end());
-			if (ImGui::Selectable(guiName.data())) {
+
+			ImGui::Selectable(guiName.data());
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("MATERIAL_DRAG", nullptr, 0);
 				_objPick = material.second;
+				ImGui::EndDragDropSource();
 			}
 		}
 		ImGui::TreePop();
@@ -533,8 +535,12 @@ void ToolScene::TestResources()
 	if (ImGui::TreeNode("GameObject")) {
 		for (const pair<wstring, shared_ptr<Object>>& go : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::GAMEOBJECT)) {
 			guiName.assign(go.first.begin(), go.first.end());
-			if (ImGui::Selectable(guiName.data())) {
+			
+			ImGui::Selectable(guiName.data());
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("GAMEOBJECT_DRAG", nullptr, 0);
 				_objPick = go.second;
+				ImGui::EndDragDropSource();
 			}
 		}
 		ImGui::TreePop();
@@ -543,8 +549,12 @@ void ToolScene::TestResources()
 	if (ImGui::TreeNode("Compoenent")) {
 		for (const pair<wstring, shared_ptr<Object>>& component : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::COMPONENT)) {
 			guiName.assign(component.first.begin(), component.first.end());
-			if (ImGui::Selectable(guiName.data())) {
+			
+			ImGui::Selectable(guiName.data());
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("COMPONENT_DRAG", nullptr, 0);
 				_objPick = component.second;
+				ImGui::EndDragDropSource();
 			}
 		}
 		ImGui::TreePop();
@@ -553,8 +563,12 @@ void ToolScene::TestResources()
 	if (ImGui::TreeNode("Mesh")) {
 		for (const pair<wstring, shared_ptr<Object>>& mesh : GET_SINGLE(Resources)->GetResources(OBJECT_TYPE::MESH)) {
 			guiName.assign(mesh.first.begin(), mesh.first.end());
-			if (ImGui::Selectable(guiName.data())) {
+			
+			ImGui::Selectable(guiName.data());
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("MESH_DRAG", nullptr, 0);
 				_objPick = mesh.second;
+				ImGui::EndDragDropSource();
 			}
 		}
 		ImGui::TreePop();
@@ -565,27 +579,21 @@ void ToolScene::TestResources()
 
 void ToolScene::TestRenderTargetView()
 {
-//	ImGui::Begin("RenderTargetView");
-//
-//	shared_ptr<RenderTargetGroup> renderTarget;
-//
-//	string guiName;
-//	for (shared_ptr<GameObject>& obj : _renderTargetView) {
-//		shared_ptr<Texture> tex = obj->GetMeshRenderer()->GetMaterial()->GetTexture(0);
-//		ImGui::Image((ImTextureID)tex->GetSRV()->GetGPUDescriptorHandleForHeapStart().ptr , ImVec2(100.0f, 100.0f));
-//		ImGui::SameLine();
-//		ImGui::Image(tex, ImVec2(100.0f, 100.0f));
-//	}
-//
-//	//renderTarget = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING);
-//	//for (uint32 i = 0; i < RENDER_TARGET_LIGHTING_GROUP_MEMBER_COUNT; ++i) {
-//	//	shared_ptr<Texture> tex = renderTarget->GetRTTexture(i);
-//	//	ImGui::ImageRTV(tex, ImVec2(100.0f, 100.0f));
-//	//	guiName.assign(tex->GetName().begin(), tex->GetName().end());
-//	//	ImGui::Text(guiName.data());
-//	//}
-//
-//	ImGui::End();
+	ImGui::Begin("RenderTargetView");
+
+	shared_ptr<RenderTargetGroup> renderTarget;
+
+	string guiName;
+
+	renderTarget = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER);
+	for (uint32 i = 0; i < RENDER_TARGET_G_BUFFER_GROUP_MEMBER_COUNT; ++i) {
+		shared_ptr<Texture> tex = renderTarget->GetRTTexture(i);
+		ImGui::ImageButton(tex, ImVec2(100.0f, 100.0f));
+		guiName.assign(tex->GetName().begin(), tex->GetName().end());
+		ImGui::Text(guiName.data());
+	}
+
+	ImGui::End();
 }
 
 // 계층구조때 쓸 녀석
@@ -707,22 +715,33 @@ void ToolScene::MeshRendererComponent()
 	string guiName;
 
 	if (ImGui::CollapsingHeader("MeshRenderer")) {
-		ImGui::Text("Current Mesh : ");
+		ImGui::Text("Mesh : ");
 		ImGui::SameLine();
 		guiName.assign(renderer->GetMesh()->GetName().begin(), renderer->GetMesh()->GetName().end());
-		if (ImGui::Selectable(guiName.data())) {
-
+		ImGui::Text(guiName.data());
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MESH_DRAG")) {
+				renderer->SetMesh(static_pointer_cast<Mesh>(_objPick));
+				_objPick = nullptr;
+			}
+			ImGui::EndDragDropTarget();
 		}
-
+		
 		/* ----- Shader ----- */
 		if (renderer->GetMaterial()->GetShader() == nullptr) {
 			return;
 		}
-		ImGui::Text("Current Shader : ");
+		ImGui::Text("Shader : ");
 		ImGui::SameLine();
 		guiName.assign(material->GetShader()->GetName().begin(), material->GetShader()->GetName().end());
-		if (ImGui::Selectable(guiName.data())) {
-
+		
+		ImGui::Text(guiName.data());
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SHADER_DRAG")) {
+				renderer->GetMaterial()->SetShader(static_pointer_cast<Shader>(_objPick));
+				_objPick = nullptr;
+			}
+			ImGui::EndDragDropTarget();
 		}
 
 		/* ----- Texture ----- */
@@ -731,19 +750,35 @@ void ToolScene::MeshRendererComponent()
 		}
 
 		for (uint32 i = 0; i < MATERIAL_TEXTURE_COUNT; ++i) {
+
 			if (material->GetTexture(i) == nullptr) {
-				continue;
+				ImGui::Image((void*)_defauleImage, ImVec2(50.0f, 50.0f));
+				guiName = "nullptr";
+			}
+			else {
+				ImGui::Image(renderer->GetMaterial()->GetTexture(i), ImVec2(50.0f, 50.0f));
+				guiName.assign(material->GetTexture(i)->GetName().begin(), material->GetTexture(i)->GetName().end());
 			}
 
-			guiName = "Current Texture" + std::to_string(i) + " : ";
-			ImGui::Image(renderer->GetMaterial()->GetTexture(i), ImVec2(50.0f, 50.0f));
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TEXTURE_DRAG")) {
+					renderer->GetMaterial()->SetTexture(i, static_pointer_cast<Texture>(_objPick));
+					_objPick = nullptr;
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			ImGui::SameLine();
+
 			ImGui::Text(guiName.data());
-			ImGui::SameLine();
-			guiName.assign(material->GetTexture(i)->GetName().begin(), material->GetTexture(i)->GetName().end());
-			if (ImGui::Selectable(guiName.data())) {
-
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TEXTURE_DRAG")) {
+					renderer->GetMaterial()->SetTexture(i, static_pointer_cast<Texture>(_objPick));
+					_objPick = nullptr;
+				}
+				ImGui::EndDragDropTarget();
 			}
+
 		}
 	}
 
@@ -866,10 +901,16 @@ void ToolScene::ParticleComponent()
 		particle->SetScale(Vec2(fTemp[0], fTemp[1]));
 
 		shared_ptr<Texture> tex = particle->GetTexture();
-		string strName;
-		strName.assign(tex->GetName().begin(), tex->GetName().end());
+		string guiName;
+		guiName.assign(tex->GetName().begin(), tex->GetName().end());
 		ImGui::Image(tex, ImVec2(50.0f, 50.0f));
-		ImGui::Selectable(strName.data());
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TEXTURE_DRAG")) {
+				particle->SetTexture(static_pointer_cast<Texture>(_objPick));
+				_objPick = nullptr;
+			}
+			ImGui::EndDragDropTarget();
+		}
 	}
 }
 
@@ -907,4 +948,32 @@ void ToolScene::CreateCubeGameObject()
 	go->GetTransform()->SetLocalPosition(Vec3(_random.Rand(-100.0f, 100.0f), _random.Rand(-100.0f, 100.0f), _random.Rand(-100.0f, 100.0f)));
 
 	AddGameObject(go);
+}
+
+void ToolScene::ParentTree(const shared_ptr<GameObject>& obj)
+{
+
+	uint32 node_flags = 0;
+	if (obj->GetTransform()->GetChilds().size() == 0) {
+		node_flags |= ImGuiTreeNodeFlags_Leaf; // ImGuiTreeNodeFlags_Bullet
+		if (ImGui::TreeNodeEx(obj->GetGUIName().data(), node_flags)) {
+			if (ImGui::IsItemActivated()) {
+				_goPick = obj;
+			}
+			ImGui::TreePop();
+		}
+	}
+	else {
+		if (ImGui::TreeNodeEx(obj->GetGUIName().data(), node_flags)) {
+			if (ImGui::IsItemActivated()) {
+				_goPick = obj;
+			}
+			for (auto& child : obj->GetTransform()->GetChilds()) {
+				ParentTree(child.lock()->GetGameObject());
+			}
+
+
+			ImGui::TreePop();
+		}
+	}
 }

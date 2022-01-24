@@ -11,7 +11,7 @@ public:
 	void Init();
 	void Clear();
 
-	bool CreatePath(const string& key, const wstring& path, const string& basePathKey = BASE_PATH);
+	bool CreatePath(const string& key, const wstring& path, const string& basePathKey = BASE_PATH_KEY);
 	const wstring& FindPath(const string& key);
 	const string& FindPathMultiByte(const string& key);
 

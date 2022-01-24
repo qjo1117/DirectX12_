@@ -44,3 +44,9 @@ void Transform::PushData()
 
 	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushGraphicsData(&transformParams, sizeof(transformParams));
 }
+
+void Transform::SetParent(shared_ptr<Transform> parent)
+{
+	_parent = parent; 
+	parent->_childs.push_back(GetGameObject()->GetTransform());
+}

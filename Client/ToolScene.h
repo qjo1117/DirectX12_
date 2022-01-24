@@ -2,11 +2,6 @@
 #include "Scene.h"
 
 
-struct ToolState
-{
-	bool transform = false;
-};
-
 /*--------------
 	ToolScene
 ---------------*/
@@ -48,8 +43,11 @@ private:
 	void	CreateCubeGameObject();
 
 private:
+	void	ParentTree(const shared_ptr<GameObject>& obj);
+
+private:
 	/* ----- Fick Variable ----- */
-	shared_ptr<GameObject>				_goPick;
+	shared_ptr<class GameObject>				_goPick;
 	shared_ptr<class Object>			_objPick;
 	int32								_isPick = -1;
 	shared_ptr<GameObject>				_dragPick;
@@ -57,14 +55,12 @@ private:
 	shared_ptr<GameObject>				_player;
 	shared_ptr<GameObject>				_camera;
 
-	ToolState							_state;
-
 	Random								_random;
 
 	vector<function<void()>>			_createList;
 
 	vector < shared_ptr<GameObject>>	_renderTargetView;
 
-	char								_text[50];
+	char								_text[MAX_PATH];
+	uint64								_defauleImage;
 };
-

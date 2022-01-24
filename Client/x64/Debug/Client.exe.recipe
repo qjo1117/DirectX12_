@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\Client.exe</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\Client.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

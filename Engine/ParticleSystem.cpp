@@ -20,7 +20,7 @@ ParticleSystem::ParticleSystem() : Component(COMPONENT_TYPE::PARTICLE_SYSTEM)
 	
 	_mesh = GET_SINGLE(Resources)->LoadPointMesh();
 	_material = GET_SINGLE(Resources)->Get<Material>(L"Particle");
-	shared_ptr<Texture> tex = GET_SINGLE(Resources)->Load<Texture>(L"Star", GET_SINGLE(PathManager)->FindPath(TEXTURE_PATH) + L"Particle\\Star.png");
+	shared_ptr<Texture> tex = GET_SINGLE(Resources)->Load<Texture>(L"Star", GET_SINGLE(PathManager)->FindPath(TEXTURE_PATH_KEY) + L"Particle\\Star.png");
 	_material->SetTexture(0, tex);
 
 	_computeMaterial = GET_SINGLE(Resources)->Get<Material>(L"ComputeParticle");

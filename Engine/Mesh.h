@@ -14,6 +14,7 @@ public:
 	/* ----- External Function ----- */
 	void Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer);
 	void Render(uint32 instanceCount = 1);
+	void Render(shared_ptr<class InstancingBuffer>& buffer);
 
 private:
 	/* ----- Create Function ----- */

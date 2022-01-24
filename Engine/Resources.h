@@ -53,6 +53,7 @@ private:
 	void CreateDefaultShader();
 	void CreateDefaultMaterial();
 	void CreateDefaultGameObject();
+	void CreateDefaultComponent();
 
 private:
 

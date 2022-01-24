@@ -17,10 +17,10 @@ void PathManager::Init()
 
 	::wcscat_s(strPath, MAX_PATH, L"Resources\\");
 
-	_paths.insert(make_pair<string, wstring>(BASE_PATH, strPath));
+	_paths.insert(make_pair<string, wstring>(BASE_PATH_KEY, strPath));
 
-	assert(CreatePath(TEXTURE_PATH, L"Texture\\"));
-	assert(CreatePath(SHADER_PATH, L"Shader\\"));
+	assert(CreatePath(TEXTURE_PATH_KEY, L"Texture\\"));
+	assert(CreatePath(SHADER_PATH_KEY, L"Shader\\"));
 
 }
 

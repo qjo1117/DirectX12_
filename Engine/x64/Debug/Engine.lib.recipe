@@ -3,34 +3,34 @@
   <ProjectOutputs />
   <ContentFiles>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\compute.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\compute.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\deferred.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\deferred.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\forward.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\forward.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\lighting.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\lighting.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\params.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\params.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\particle.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\particle.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\SimpleTexture.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\SimpleTexture.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\skybox.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\skybox.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\utils.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\utils.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Cpp\DirectX12\11_ParticleSystem\Output\wirefram.cso</FullPath>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\wirefram.cso</FullPath>
     </ContentFile>
   </ContentFiles>
   <SatelliteDlls />
