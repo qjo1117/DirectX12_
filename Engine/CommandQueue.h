@@ -17,7 +17,7 @@ public:
 	void WaitSync();
 
 	/* ----- Render Function ----- */
-	void RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect);
+	void RenderBegin();
 	void RenderEnd();
 
 	void FlushResourceCommnadQueue();		// 리소스를 로딩하는 함수

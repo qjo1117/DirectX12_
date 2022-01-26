@@ -48,6 +48,10 @@ void CameraController::TargetFollow()
 
 void CameraController::CameraMove()
 {
+	if (ImGui::IsAnyItemActive()) {
+		return;
+	}
+
 	Vec3 move;
 
 	if (INPUT->GetButton(KEY_TYPE::A)) {

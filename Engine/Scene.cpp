@@ -7,9 +7,11 @@
 #include "Light.h"
 #include "Resources.h"
 
-Scene::Scene()
+Scene::Scene() : 
+	_light(_gameObjects[static_cast<uint8>(LAYER_TYPE::LIGHT)]),
+	_camera(_gameObjects[static_cast<uint8>(LAYER_TYPE::CAMERA)])
 {
-	_objects.reserve(1000);
+	_objects.reserve(10000);
 }
 
 Scene::~Scene()
@@ -46,10 +48,10 @@ void Scene::Start()
 		if (object == nullptr) {
 			continue;
 		}
-
 		if (object->GetActive() == false) {
 			continue;
 		}
+
 		object->Start();
 	}
 }
@@ -60,7 +62,6 @@ void Scene::Update()
 		if (object == nullptr) {
 			continue;
 		}
-
 		if (object->GetActive() == false) {
 			continue;
 		}
@@ -75,7 +76,6 @@ void Scene::LateUpdate()
 		if (object == nullptr) {
 			continue;
 		}
-
 		if (object->GetActive() == false) {
 			continue;
 		}
@@ -90,24 +90,50 @@ void Scene::FinalUpdate()
 		if (object == nullptr) {
 			continue;
 		}
-
 		if (object->GetActive() == false) {
 			continue;
 		}
+
 		object->FinalUpdate();
 	}
 }
 
-void Scene::Render()
+void Scene::ClearRTV()
 {
-	PushLightData();
 
-	/* ----- CommandQueue에서 이전해옴 ----- */
 	int8 backIndex = GEngine->GetSwapChain()->GetBackBufferIndex();
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->ClearRenderTargetView(backIndex);
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->ClearRenderTargetView();
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->ClearRenderTargetView();
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->ClearRenderTargetView();
 
+}
+
+void Scene::RenderGameObjectDivision()
+{
+
+}
+
+void Scene::RenderShadow()
+{
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->OMSetRenderTargets();
+
+	for (const shared_ptr<GameObject> light : _gameObjects[static_cast<uint8>(LAYER_TYPE::LIGHT)]) {
+		if (light->GetActive() == false) {
+			continue;
+		}
+		if (light->GetLight()->GetLightType() != LIGHT_TYPE::DIRECTIONAL_LIGHT) {
+			continue;
+		}
+		
+		light->GetLight()->RenderShadow();
+	}
+
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->WaitTargetToResource();
+}
+
+void Scene::RenderDeferred()
+{
 	// MainCamera가 렌더링을 해준다.
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->OMSetRenderTargets();
 
@@ -116,17 +142,53 @@ void Scene::Render()
 	mainCamera->SortGameObject();
 	mainCamera->Render_Deferred();
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->WaitTargetToResource();
+}
 
+void Scene::Render()
+{
+	PushLightData();
+
+	ClearRTV();
+
+	RenderShadow();
+	RenderDeferred();
 	RenderLights();
-	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->WaitTargetToResource();
-
 	RenderFinal();
 
+	RenderFoward();
+}
+
+void Scene::RenderLights()
+{
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->OMSetRenderTargets();
+
+	// 광원을 그린다.
+	for (const shared_ptr<GameObject>& light : _gameObjects[static_cast<uint8>(LAYER_TYPE::LIGHT)]) {
+		light->GetLight()->Render();
+	}
+
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->WaitTargetToResource();
+
+}
+
+void Scene::RenderFinal()
+{
+	int8 backIndex = GEngine->GetSwapChain()->GetBackBufferIndex();
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->OMSetRenderTargets(1, backIndex);
+
+	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Final");
+	material->PushGraphicsData();
+	GET_SINGLE(Resources)->Get<Mesh>(L"Rectangle")->Render();
+}
+
+void Scene::RenderFoward()
+{
+	shared_ptr<Camera> mainCamera = _gameObjects[static_cast<uint8>(LAYER_TYPE::CAMERA)][0]->GetCamera();
 	mainCamera->Render_Forward();
 
 	// UI, Forward를 그려준다.
 	for (const auto& camera : _gameObjects[static_cast<uint8>(LAYER_TYPE::CAMERA)]) {
-		if(camera->GetCamera() == nullptr) {
+		if (camera->GetCamera() == nullptr) {
 			continue;
 		}
 		if (camera->GetActive() == false) {
@@ -139,26 +201,6 @@ void Scene::Render()
 		camera->GetCamera()->SortGameObject();
 		camera->GetCamera()->Render_Forward();
 	}
-}
-
-void Scene::RenderLights()
-{
-	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->OMSetRenderTargets();
-
-	// 광원을 그린다.
-	for (const shared_ptr<GameObject>& light : _gameObjects[static_cast<uint8>(LAYER_TYPE::LIGHT)]) {
-		light->GetLight()->Render();
-	}
-}
-
-void Scene::RenderFinal()
-{
-	int8 backIndex = GEngine->GetSwapChain()->GetBackBufferIndex();
-	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->OMSetRenderTargets(1, backIndex);
-
-	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Final");
-	material->PushGraphicsData();
-	GET_SINGLE(Resources)->Get<Mesh>(L"Rectangle")->Render();
 }
 
 void Scene::PushLightData()

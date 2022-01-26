@@ -21,8 +21,17 @@ public:
 	virtual void FinalUpdate();
 
 	void Render();
+
+	void ClearRTV();
+
+	void RenderGameObjectDivision();
+
+	void RenderShadow();
+	void RenderDeferred();
 	void RenderLights();
 	void RenderFinal();
+
+	void RenderFoward();
 
 private:
 	void PushLightData();
@@ -48,5 +57,8 @@ private:
 	array<vector<shared_ptr<GameObject>>, static_cast<uint32>(LAYER_TYPE::END)> _gameObjects;
 	vector<shared_ptr<GameObject>> _objects;		// 한번에 전체순회
 	wstring _name;
+
+	vector<shared_ptr<GameObject>>& _light;
+	vector<shared_ptr<GameObject>>& _camera;
 };
 

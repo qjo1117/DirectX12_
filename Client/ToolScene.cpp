@@ -8,7 +8,6 @@
 #include "Resources.h"
 #include "PathManager.h"
 
-
 #include "Material.h"
 #include "MeshRenderer.h"
 #include "Transform.h"
@@ -19,8 +18,6 @@
 #include "CameraController.h"
 #include "RotationXComponent.h"
 #include "PlayerController.h"
-
-
 
 #include "Billboard.h"
 #include "ParticleSystem.h"
@@ -64,24 +61,20 @@ ToolScene::ToolScene()
 
 #pragma region Player
 	{
-		for (uint32 i = 0; i < 100; ++i) {
+		for (uint32 i = 0; i < 3; ++i) {
 			shared_ptr<GameObject> go = make_shared<GameObject>();
 			go->Init();
 			go->SetGUIName(L"Player" + std::to_wstring(i));
+			go->AddComponent(make_shared<Transform>());
 
+			go->SetStatic(false);
 			shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
+			renderer->SetMaterial(GET_SINGLE(Resources)->Get<Material>(L"Player"));
 			renderer->SetMesh(GET_SINGLE(Resources)->LoadCubeMesh());
-
-			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Player");
-			renderer->SetMaterial(material);
-
-			go->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-			go->GetTransform()->SetLocalPosition(Vec3(-750.0f + ((i % 10) * 150.0f), (i / 10) * 150.0f, 150.f));
-
 			go->AddComponent(renderer);
-			go->GetOrAddComponent<PlayerController>();
+			go->GetTransform()->SetLocalScale(Vec3(100.0f, 100.0f, 100.0f));
+			go->GetTransform()->SetLocalPosition(Vec3(-130.0f + (i * 130.0f), 100.0f, 100.0f));
 			AddGameObject(go, LAYER_TYPE::DEFAULT);
-
 			go->GetTransform()->SetParent(_player->GetTransform());
 		}
 	}
@@ -105,12 +98,11 @@ ToolScene::ToolScene()
 
 		GET_SINGLE(Resources)->Add<Material>(L"Metal", material);
 
-
 		shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
 		renderer->SetMesh(mesh);
 		renderer->SetMaterial(material);
 
-		go->GetTransform()->SetLocalScale(Vec3(1000.0f, 1.0f, 1000.0f));
+		go->GetTransform()->SetLocalScale(Vec3(3000.0f, 1.0f, 3000.0f));
 		go->GetTransform()->SetLocalPosition(Vec3(0.0f, -100.0f, 0.0f));
 
 		go->AddComponent(renderer);
@@ -182,7 +174,7 @@ ToolScene::ToolScene()
 		uiTest->GetTransform()->SetLocalScale(Vec3(1.0f, 1.0f, 1.0f));
 		uiTest->SetGUIName(L"RenderTarget");
 
-		for (int32 i = 0; i < 6; ++i) {
+		for (int32 i = 0; i < 7; ++i) {
 			shared_ptr<GameObject> renderTarget = make_shared<GameObject>();
 			renderTarget->SetGUIName("RenderTarget" + std::to_string(i));
 			renderTarget->AddComponent(make_shared<Transform>());
@@ -199,6 +191,9 @@ ToolScene::ToolScene()
 				}
 				else if (i < 5) {
 					texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->GetRTTexture(i - 3);
+				}
+				else if (i < 6) {
+					texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->GetRTTexture(0);
 				}
 				else {
 					texture = GET_SINGLE(Resources)->Get<Texture>(L"UAVTexture");
@@ -225,9 +220,9 @@ ToolScene::ToolScene()
 		shared_ptr<GameObject> light = make_shared<GameObject>();
 		light->SetGUIName(L"Directional Light");
 		light->AddComponent(make_shared<Transform>());
-		//light->GetTransform()->SetLocalPosition(Vec3(0.f, 150.f, 150.f));
+		light->GetTransform()->SetLocalPosition(Vec3(0.f, 3000.0f, 0.0f));
 		light->AddComponent(make_shared<Light>());
-		light->GetLight()->SetLightDirection(Vec3(1.0f, -1.0f, 1.f));
+		light->GetLight()->SetLightDirection(Vec3(0.0f, -1.0f, 0.0f));
 		light->GetLight()->SetLightType(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 		light->GetLight()->SetDiffuse(Vec3(0.7f, 0.5f, 0.6f));
 		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
@@ -250,24 +245,6 @@ ToolScene::ToolScene()
 		light->GetLight()->SetAmbient(Vec3(0.0f, 0.3f, 0.0f));
 		light->GetLight()->SetSpecular(Vec3(0.0f, 0.3f, 0.0f));
 		light->GetLight()->SetLightRange(200.0f);
-
-		AddGameObject(light);
-	}
-#pragma endregion
-
-#pragma region Spot Light
-	{
-		shared_ptr<GameObject> light = make_shared<GameObject>();
-		light->SetGUIName(L"Spot Light");
-		light->AddComponent(make_shared<Transform>());
-		light->GetTransform()->SetLocalPosition(Vec3(0.0f, 0.0f, 0.0f));
-		light->GetTransform()->SetLocalScale(Vec3(1.0f, 1.0f, 1.0f));
-		light->AddComponent(make_shared<Light>());
-		light->GetLight()->SetLightType(LIGHT_TYPE::SPOT_LIGHT);
-		light->GetLight()->SetDiffuse(Vec3(0.5f, 0.5f, 0.5f));
-		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
-		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
-		light->GetLight()->SetLightRange(1000.0f);
 
 		AddGameObject(light);
 	}
@@ -368,9 +345,13 @@ void ToolScene::TestEditor()
 		::sprintf_s(strTemp, "%s", _goPick->GetGUIName().data());
 
 		bool active = _goPick->GetActive();
-		ImGui::Checkbox(_goPick->GetGUIName().data(), &active);
+		ImGui::Checkbox("##Check", &active);
 		_goPick->SetActive(active);
+		ImGui::SameLine();
 
+		::strcpy_s(_text, _goPick->GetGUIName().data());
+		ImGui::InputText("##Nmae", _text, MAX_PATH);
+		_goPick->SetGUIName(_text);
 		ImGui::SameLine();
 
 		string layer = EnumToStr((LAYER_TYPE)_goPick->GetLayer());				// 매크로 사용
@@ -579,21 +560,28 @@ void ToolScene::TestResources()
 
 void ToolScene::TestRenderTargetView()
 {
-	ImGui::Begin("RenderTargetView");
+	//ImGui::Begin("RenderTargetView");
 
-	shared_ptr<RenderTargetGroup> renderTarget;
+	//shared_ptr<RenderTargetGroup> renderTarget;
 
-	string guiName;
+	//string guiName;
 
-	renderTarget = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER);
-	for (uint32 i = 0; i < RENDER_TARGET_G_BUFFER_GROUP_MEMBER_COUNT; ++i) {
-		shared_ptr<Texture> tex = renderTarget->GetRTTexture(i);
-		ImGui::ImageButton(tex, ImVec2(100.0f, 100.0f));
-		guiName.assign(tex->GetName().begin(), tex->GetName().end());
-		ImGui::Text(guiName.data());
-	}
+	//renderTarget = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER);
+	//for (uint32 i = 0; i < RENDER_TARGET_G_BUFFER_GROUP_MEMBER_COUNT; ++i) {
+	//	shared_ptr<Texture> tex = renderTarget->GetRTTexture(i);
+	//	ImGui::Image(tex, ImVec2(100.0f, 100.0f));
+	//	guiName.assign(tex->GetName().begin(), tex->GetName().end());
+	//	ImGui::Text(guiName.data());
+	//}
+	//renderTarget = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING);
+	//for (uint32 i = 0; i < RENDER_TARGET_LIGHTING_GROUP_MEMBER_COUNT; ++i) {
+	//	shared_ptr<Texture> tex = renderTarget->GetRTTexture(i);
+	//	ImGui::Image(tex, ImVec2(100.0f, 100.0f));
+	//	guiName.assign(tex->GetName().begin(), tex->GetName().end());
+	//	ImGui::Text(guiName.data());
+	//}
 
-	ImGui::End();
+	//ImGui::End();
 }
 
 // 계층구조때 쓸 녀석
@@ -727,6 +715,19 @@ void ToolScene::MeshRendererComponent()
 			ImGui::EndDragDropTarget();
 		}
 		
+		
+		/* ----- Material ----- */
+		guiName.assign(renderer->GetMaterial()->GetName().begin(), renderer->GetMaterial()->GetName().end());
+		ImGui::Text("Material : %s", guiName.data());
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MATERIAL_DRAG")) {
+				renderer->SetMaterial(static_pointer_cast<Material>(_objPick));
+				_objPick = nullptr;
+			}
+			ImGui::EndDragDropTarget();
+		}
+		ImGui::Separator();
+
 		/* ----- Shader ----- */
 		if (renderer->GetMaterial()->GetShader() == nullptr) {
 			return;
@@ -744,13 +745,18 @@ void ToolScene::MeshRendererComponent()
 			ImGui::EndDragDropTarget();
 		}
 
+		Vec4 color = material->GetVec4(0);
+		float fTemp[4] = { color.x, color.y,color.z,color.w };
+		ImGui::ColorEdit4("##Color", fTemp);
+		color = { fTemp[0], fTemp[1] ,fTemp[2] ,fTemp[3] };
+		material->SetVec4(0, color);
+
 		/* ----- Texture ----- */
 		if (renderer->GetMaterial()->GetShader() == nullptr) {
 			return;
 		}
 
 		for (uint32 i = 0; i < MATERIAL_TEXTURE_COUNT; ++i) {
-
 			if (material->GetTexture(i) == nullptr) {
 				ImGui::Image((void*)_defauleImage, ImVec2(50.0f, 50.0f));
 				guiName = "nullptr";
@@ -933,12 +939,8 @@ void ToolScene::CreateCubeGameObject()
 	shared_ptr<GameObject> go = make_shared<GameObject>();
 	go->Init();
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
-
-	shared_ptr<Material> material = make_shared<Material>();
-	material->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Deferred"));
-
 	shared_ptr<MeshRenderer> renderer = make_shared<MeshRenderer>();
-	renderer->SetMaterial(material);
+	renderer->SetMaterial(GET_SINGLE(Resources)->Get<Material>(L"Defualt"));
 	renderer->SetMesh(mesh);
 
 	go->AddComponent(make_shared<Transform>());

@@ -37,10 +37,13 @@ public:
 	/* ----- virtual Function ----- */
 	void Render();
 	void Render(shared_ptr<class InstancingBuffer>& buffer);
+	void RenderShadow();
 
 private:
 	/* ----- MeshRender Variable ----- */
 	shared_ptr<Mesh>		_mesh;
 	shared_ptr<Material>	_material;
+
+	shared_ptr<Material>	_shadow;
 };
 

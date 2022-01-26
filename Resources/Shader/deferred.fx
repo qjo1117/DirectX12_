@@ -81,7 +81,7 @@ PS_OUT PS_Main(VS_OUT input)
     // 각각 필요한 정보를 저장한다.
     output.position = float4(input.viewPos.xyz, 0.0f);
     output.normal = float4(viewNormal.xyz, 0.0f);
-    output.color = color;
+    output.color = color * g_vec4_0;
 
     return output;
 }

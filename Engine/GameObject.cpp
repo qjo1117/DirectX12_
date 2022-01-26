@@ -111,31 +111,26 @@ shared_ptr<Component> GameObject::GetFixedComponent(COMPONENT_TYPE type)
 
 shared_ptr<Transform> GameObject::GetTransform()
 {
-	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::TRANSFORM);
-	return static_pointer_cast<Transform>(component);
+	return static_pointer_cast<Transform>(GetFixedComponent(COMPONENT_TYPE::TRANSFORM));
 }
 
 shared_ptr<MeshRenderer> GameObject::GetMeshRenderer()
 {
-	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::MESH_RENDERER);
-	return static_pointer_cast<MeshRenderer>(component);
+	return static_pointer_cast<MeshRenderer>(GetFixedComponent(COMPONENT_TYPE::MESH_RENDERER));
 }
 
 shared_ptr<Camera> GameObject::GetCamera()
 {
-	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::CAMERA);
-	return static_pointer_cast<Camera>(component);
+	return static_pointer_cast<Camera>(GetFixedComponent(COMPONENT_TYPE::CAMERA));
 }
 
 shared_ptr<Light> GameObject::GetLight()
 {
-	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::LIGHT);
-	return static_pointer_cast<Light>(component);
+	return static_pointer_cast<Light>(GetFixedComponent(COMPONENT_TYPE::LIGHT));
 }
 
 shared_ptr<ParticleSystem> GameObject::GetParticleSystem()
 {
-	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::PARTICLE_SYSTEM);
-	return static_pointer_cast<ParticleSystem>(component);
+	return static_pointer_cast<ParticleSystem>(GetFixedComponent(COMPONENT_TYPE::PARTICLE_SYSTEM));
 }
 

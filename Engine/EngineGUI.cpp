@@ -82,7 +82,6 @@ void ImGui::Image(shared_ptr<Texture> texture, const ImVec2& size, const ImVec2&
 		return;
 	}
 
-
 	uint32 increase = DEVICE->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	uint32 destSize = 1;

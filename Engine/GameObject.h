@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MonoBehaviour.h"
 #include "Component.h"
 #include "Object.h"
 #include "Resources.h"
@@ -63,6 +64,9 @@ public:
 
 	bool			GetActive() { return _isActive; }
 	void			SetActive(bool active) { _isActive = active; }
+
+	void			SetStatic(bool flag) { _static = flag; }
+	bool			IsStatic() { return _static; }
 private:
 	uint32 _layerType = static_cast<uint32>(LAYER_TYPE::DEFAULT);
 
@@ -74,6 +78,7 @@ private:
 
 	bool _isFrustum = true;
 	bool _isActive = true;
+	bool _static = true;
 public:
 	static uint32 ID;
 };
@@ -95,7 +100,7 @@ inline void GameObject::AddComponent(shared_ptr<T> component)
 	else {
 		static char* namePointer = (char*)(&typeid(component).name()[28]);
 		namePointer[::strlen(namePointer) - 1] = '\0';
-		_scripts.insert(pair<string, shared_ptr<MonoBehaviour>>(namePointer, dynamic_pointer_cast<MonoBehaviour>(component)));
+		_scripts.insert(make_pair<string, shared_ptr<MonoBehaviour>>(namePointer, dynamic_pointer_cast<MonoBehaviour>(component)));
 	}
 }
 

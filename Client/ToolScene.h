@@ -47,7 +47,7 @@ private:
 
 private:
 	/* ----- Fick Variable ----- */
-	shared_ptr<class GameObject>				_goPick;
+	shared_ptr<class GameObject>		_goPick;
 	shared_ptr<class Object>			_objPick;
 	int32								_isPick = -1;
 	shared_ptr<GameObject>				_dragPick;

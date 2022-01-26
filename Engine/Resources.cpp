@@ -655,6 +655,20 @@ void Resources::CreateDefaultShader()
 		shader->CreateComputeShader(L"particle.fx", "CS_Main", "cs_5_0");
 		Add<Shader>(L"ComputeParticle", shader);
 	}
+
+	/* ----- Shadow ----- */
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::SHADOW,
+			RASTERIZER_TYPE::CULL_BACK,
+			DEPTH_STENCIL_TYPE::LESS,
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"shadow.fx", info);
+		Add<Shader>(L"Shadow", shader);
+	}
 }
 
 void Resources::CreateDefaultMaterial()
@@ -731,6 +745,14 @@ void Resources::CreateDefaultMaterial()
 		Add<Material>(L"ComputeParticle", material);
 	}
 
+	/* ----- Shadow ----- */
+	{
+		shared_ptr<Shader> shader = Get<Shader>(L"Shadow");
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(shader);
+		Add<Material>(L"Shadow", material);
+	}
+
 	/* ----- Test Material(Player) ----- */
 	{
 		shared_ptr<Material> material = make_shared<Material>();
@@ -741,6 +763,14 @@ void Resources::CreateDefaultMaterial()
 
 
 		Add<Material>(L"Player", material);
+	}
+
+	/* ----- Test Material(Defulat) ----- */
+	{
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Deferred"));
+
+		Add<Material>(L"Defualt", material);
 	}
 }
 

@@ -337,7 +337,7 @@
     <None Include="SimpleMath.inl">
       <Filter>Utils\User</Filter>
     </None>
-    <None Include="layer.def">
+    <None Include="layer.hpp">
       <Filter>Core</Filter>
     </None>
   </ItemGroup>
@@ -370,6 +370,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shader\particle.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\shadow.fx">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -4,6 +4,8 @@
 
 Material::Material() : Object(OBJECT_TYPE::MATERIAL)
 {
+	// Color
+	_params.vec4Param[0] = Vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 Material::~Material()
@@ -44,7 +46,7 @@ void Material::PushComputeData()
 		GEngine->GetComputeDescHeap()->SetSRV(_textures[i]->GetSRVCpuHandle(), reg);
 	}
 
-	// 파이프라인 세팅
+	// 파이프라인 세팅-
 	_shader->Update();
 }
 

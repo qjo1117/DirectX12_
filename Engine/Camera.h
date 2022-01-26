@@ -23,8 +23,11 @@ public:
 	//void				Render();
 
 	void SortGameObject();
+	void SortShadowGameObject();
+
 	void Render_Deferred();
 	void Render_Forward();
+	void Render_Shadow();
 
 	/* ----- Helper Function ----- */
 	float				GetNear() { return _near; }
@@ -32,10 +35,16 @@ public:
 	float				GetFov() { return _fov; }
 	PROJECTION_TYPE		GetProjectionType() { return _type; }
 
+	Matrix&				GetViewMatrix() { return _matView; }
+	Matrix&				GetProjectionMatrix() { return _matProjection; }
+
 	void				SetProjectionType(PROJECTION_TYPE type) { _type = type; }
 	void				SetNear(float value) { _near = value; }
 	void				SetFar(float value) { _far = value; }
 	void				SetFov(float value) { if (value < 0.1f) { value = 0.1f; } else if (value >= XM_PI) { value = XM_PI; }_fov = value; }	// ±ÍÂú¾Æ¼­ ÇÑÁÙ·Î ÄÚµùÇÔ
+	void				SetScale(float value) { _scale = value; }
+	void				SetWidth(float value) { _width = value; }	
+	void				SetHeight(float value) { _height = value; }	
 	
 	void SetCullingMaskLayerOnOff(uint8 layer, bool flag)
 	{
@@ -58,6 +67,8 @@ private:
 	float				_far = 2000.0f;
 	float				_fov = XM_PI / 4.0f;
 	float				_scale = 1.0f;
+	float				_width = 0.0f;
+	float				_height = 0.0f;
 
 	Matrix				_matView = {};
 	Matrix				_matProjection = {};
@@ -69,6 +80,7 @@ private:
 	vector<shared_ptr<GameObject>> _vecDeferred;
 	vector<shared_ptr<GameObject>> _vecForward;
 	vector<shared_ptr<GameObject>> _vecParticle;
+	vector<shared_ptr<GameObject>> _vecShadow;
 
 public:
 	static Matrix		S_MatView;			

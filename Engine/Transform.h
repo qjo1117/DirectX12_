@@ -40,6 +40,10 @@ public:
 	void				MoveRotation(const Vec3& rotation) { _localPosition += rotation; }
 	void				MoveScale(const Vec3& scale) { _localPosition += scale; }
 
+
+	void				LookAt(const Vec3& dir);
+	static bool			CloseEnough(const float& a, const float& b, const float& epsilon = std::numeric_limits<float>::epsilon());
+	static Vec3			DecomposeRotationMatrix(const Matrix& rotation);
 public:
 	/* ----- Parent Helper Function ----- */
 	void				SetParent(shared_ptr<Transform> parent);

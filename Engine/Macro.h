@@ -52,13 +52,13 @@ public:                                                             \
 enum class LAYER_TYPE : uint32
 {
 #define X(a) a,
-#include "layer.def"
+#include "layer.hpp"
 #undef X
 };
 
 const std::string LAYER_TYPE_STR[] = {
 #define X(a) #a,
-#include "layer.def"
+#include "layer.hpp"
 #undef X
 };
 

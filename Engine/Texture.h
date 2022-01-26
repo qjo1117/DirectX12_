@@ -30,12 +30,12 @@ public:
 	ComPtr<ID3D12DescriptorHeap>	GetRTV() { return _rtvHeap; }
 	ComPtr<ID3D12DescriptorHeap>	GetDSV() { return _dsvHeap; }
 
-	uint32 GetWidth() { return  static_cast<uint32>(_image.GetImages()->width); }
-	uint32 GetHeight() { return static_cast<uint32>(_image.GetImages()->height); }
-
+	float							GetWidth() { return static_cast<float>(_desc.Width); }
+	float							GetHeight() { return static_cast<float>(_desc.Height); }
 private:
 	/* ----- Image Resource Variable ----- */
 	ScratchImage					_image;
+	D3D12_RESOURCE_DESC				_desc;
 	ComPtr<ID3D12Resource>			_tex2D;
 
 	/* ----- GPU Handle Variable ----- */

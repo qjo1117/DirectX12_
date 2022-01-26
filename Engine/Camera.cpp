@@ -8,12 +8,21 @@
 #include "SceneManager.h"
 #include "ParticleSystem.h"
 #include "InstancingManager.h"
+#include "SceneManager.h"
 
 Matrix Camera::S_MatView;
 Matrix Camera::S_MatProjection;
 
 Camera::Camera() : Component(COMPONENT_TYPE::CAMERA)
 {
+	_vecDeferred.reserve(1000);
+	_vecForward.reserve(1000);
+	_vecParticle.reserve(1000);
+	_vecShadow.reserve(1000);
+
+	_width = static_cast<float>(GEngine->GetWindow().width);
+	_height = static_cast<float>(GEngine->GetWindow().height);
+
 }
 
 Camera::~Camera()
@@ -25,19 +34,12 @@ void Camera::FinalUpdate()
 	// 상세설명 : view는 꺼꾸로 봐야지 맞다.
 	_matView = GetTransform()->GetLocalToWorldMatrix().Invert();
 
-	float width = static_cast<float>(GEngine->GetWindow().width);
-	float height = static_cast<float>(GEngine->GetWindow().height);
-
 	if (_type == PROJECTION_TYPE::PERSPECTIVE) {
-		_matProjection = ::XMMatrixPerspectiveFovLH(_fov, width / height, _near, _far);
+		_matProjection = ::XMMatrixPerspectiveFovLH(_fov, _width / _height, _near, _far);
 	}
 	else {
-		_matProjection = ::XMMatrixOrthographicLH(width * _scale, height * _scale, _near, _far);
+		_matProjection = ::XMMatrixOrthographicLH(_width * _scale, _height * _scale, _near, _far);
 	}
-
-	// 이유 : 프러스텀에서 Camera의 역행렬을 받는데 Render_Forward값으로 변경된 상황이기때문에 카메라의 값으로 변경해줘야한다.
-	S_MatProjection = _matProjection;
-	S_MatView = _matView;
 
 	_frustum.FinalUpdate();
 }
@@ -51,10 +53,10 @@ void Camera::SortGameObject()
 	_vecDeferred.clear();
 	_vecParticle.clear();
 
+	S_MatView = _matView;
+	S_MatProjection = _matProjection;
+
 	for (const shared_ptr<GameObject>& go : gameObjects) {
-		if (go->GetMeshRenderer() == nullptr && go->GetParticleSystem() == nullptr) {
-			continue;
-		}
 		if (IsCulled(go->GetLayer())) {
 			continue;
 		}
@@ -64,10 +66,13 @@ void Camera::SortGameObject()
 
 		if (go->GetCheckFrustum()) {
 			if (_frustum.ContainSphere(
-				go->GetTransform()->GetWorldPosition(),
+				go->GetTransform()->GetLocalPosition(),
 				go->GetTransform()->GetBoundingSphereRadius()) == false) {
 				continue;
 			}
+		}
+		if (go->GetMeshRenderer() == nullptr && go->GetParticleSystem() == nullptr) {
+			continue;
 		}
 
 		// MeshRenderer가 있을경우에만 실행을 해준다.
@@ -89,6 +94,38 @@ void Camera::SortGameObject()
 
 }
 
+void Camera::SortShadowGameObject()
+{
+	shared_ptr<Scene> scene = GET_SINGLE(SceneManager)->GetCurrentScene();
+	const vector<shared_ptr<GameObject>>& gameObjects = scene->GetAllGameObjects();
+
+	_vecShadow.clear();
+
+	S_MatView = _matView;
+	S_MatProjection = _matProjection;
+
+	for (const shared_ptr<GameObject>& go : gameObjects) {
+		if (go->IsStatic()) {
+			continue;
+		}
+		if (IsCulled(go->GetLayer())) {
+			continue;
+		}
+		if (go->GetCheckFrustum()) {
+			if (_frustum.ContainSphere(
+				go->GetTransform()->GetLocalPosition(),
+				go->GetTransform()->GetBoundingSphereRadius()) == false) {
+				continue;
+			}
+		}
+		if (go->GetMeshRenderer() == nullptr) {
+			continue;
+		}
+
+		_vecShadow.push_back(go);
+	}
+}
+
 void Camera::Render_Deferred()
 {
 	S_MatView = _matView;
@@ -100,12 +137,19 @@ void Camera::Render_Deferred()
 
 void Camera::Render_Forward()
 {
-	S_MatView = _matView;
-	S_MatProjection = _matProjection;
-
 	GET_SINGLE(InstancingManager)->Render(_vecForward);
 
 	for (const shared_ptr<GameObject>& go : _vecParticle) {
 		go->GetParticleSystem()->Render();
 	}
+}
+
+void Camera::Render_Shadow()
+{
+	S_MatView = _matView;
+	S_MatProjection = _matProjection;
+	for (const shared_ptr<GameObject>& go : _vecShadow) {
+		go->GetMeshRenderer()->RenderShadow();
+	}
+
 }

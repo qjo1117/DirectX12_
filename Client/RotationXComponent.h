@@ -20,6 +20,9 @@ public:
 	virtual void DrawGUI();
 
 private:
-	float _speed = 5.0f;
+	float _speedX = 1.0f;
+	float _speedY = 1.0f;
+	float _speedZ = 1.0f;
+	static Random random;
 };
 

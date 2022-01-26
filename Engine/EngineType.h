@@ -30,5 +30,6 @@ struct TransformParams
 	Matrix matProjection;
 	Matrix matWV;
 	Matrix matWVP;
+	Matrix matViewInv;
 };
 

@@ -9,6 +9,7 @@ enum
 	MATERIAL_TEXTURE_COUNT = 4,
 	MATERIAL_VECTOR2_COUNT = 4,
 	MATERIAL_VECTOR4_COUNT = 4,
+	MATERIAL_MATRIX_COUNT = 4,
 };
 
 struct MaterialParam
@@ -18,12 +19,14 @@ struct MaterialParam
 	void SetTexOn(uint8 index, int32 value) { texOnParam[index] = value; }
 	void SetVec2(uint8 index, Vec2 value) { vec2Param[index] = value; }
 	void SetVec4(uint8 index, Vec4 value) { vec4Param[index] = value; }
+	void SetMatrix(uint8 index, Matrix value) { matParam[index] = value; }
 
 	array<int32, MATERIAL_INT_COUNT>		intParam;
 	array<float, MATERIAL_FLOAT_COUNT>		floatParam;
 	array<int32, MATERIAL_TEXTURE_COUNT>	texOnParam;
 	array<Vec2,  MATERIAL_VECTOR2_COUNT>	vec2Param;
 	array<Vec4,  MATERIAL_VECTOR4_COUNT>	vec4Param;
+	array<Matrix, MATERIAL_MATRIX_COUNT>	matParam;
 };
 
 /*-------------
@@ -52,9 +55,11 @@ public:
 	}
 	void SetVec2(uint8 index, Vec2 value) { _params.SetVec2(index, value); }
 	void SetVec4(uint8 index, Vec4 value) { _params.SetVec4(index, value); }
+	void SetMatrix(uint8 index, Matrix value) { _params.SetMatrix(index, value); }
 
 
 	int32 GetInt(uint8 index) { return _params.intParam[index]; }
+	Vec4 GetVec4(uint8 index) { return _params.vec4Param[index]; }
 
 	void Dispatch(uint32 x, uint32 y, uint32 z);
 	

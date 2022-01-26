@@ -130,7 +130,7 @@ void Texture::Create(DXGI_FORMAT format, uint32 width, uint32 height, const D3D1
 		IID_PPV_ARGS(&_tex2D)
 	);
 
-
+	_desc = desc;
 
 	assert(SUCCEEDED(hr));
 
@@ -140,6 +140,8 @@ void Texture::Create(DXGI_FORMAT format, uint32 width, uint32 height, const D3D1
 void Texture::CreateFromResource(ComPtr<ID3D12Resource> tex2D)
 {
 	_tex2D = tex2D;
+
+	_desc = tex2D->GetDesc();
 
 	// 주요 조합
 	// - DSV 단독 (조합X)		엔진니어가 사용하는 DepthStencil

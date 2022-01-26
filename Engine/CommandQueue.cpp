@@ -53,7 +53,7 @@ void GraphicsCommandQueue::WaitSync()
 }
 
 
-void GraphicsCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
+void GraphicsCommandQueue::RenderBegin()
 {
 	/* ----- 그리기 전 사전 단계 ----- */
 	_cmdAlloc->Reset();
@@ -79,9 +79,6 @@ void GraphicsCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_REC
 
 	_cmdList->ResourceBarrier(1, &barrier);
 
-	/* ----- 그려질 리소스의 크기를 정의해준다. ----- */
-	_cmdList->RSSetViewports(1, vp);
-	_cmdList->RSSetScissorRects(1, rect);
 }
 
 void GraphicsCommandQueue::RenderEnd()

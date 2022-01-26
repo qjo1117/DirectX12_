@@ -21,6 +21,9 @@
       <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\particle.cso</FullPath>
     </ContentFile>
     <ContentFile>
+      <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\shadow.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
       <FullPath>D:\Cpp\DirectX12\12_ShadowMapping\Output\SimpleTexture.cso</FullPath>
     </ContentFile>
     <ContentFile>
